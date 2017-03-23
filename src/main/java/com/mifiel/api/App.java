@@ -14,11 +14,6 @@ import com.mifiel.api.objects.Owner;
 import com.mifiel.api.objects.Signature;
 import com.mifiel.api.utils.MifielUtils;
 
-/**
- * Hello world!
- *
- */
-
 //TODO: Change to java 1.6
 public class App {
     public static void main( String[] args ) throws MifielException {
