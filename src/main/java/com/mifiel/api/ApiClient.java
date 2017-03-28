@@ -27,7 +27,6 @@ public final class ApiClient {
 	private final static String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 	private final String DATE_FORMAT = "EEE, d MMM yyyy HH:mm:ss z";
 	private final String API_VERSION = "/api/v1/";
-	//private final String CONTENT_TYPE = "multipart/form-data";//"application/x-www-form-urlencoded";//"multipart/form-data";//"application/x-www-form-urlencoded";//"multipart/form-data";
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 	private final TimeZone gmtTime = TimeZone.getTimeZone("GMT");
 	private final UrlValidator urlValidator = new UrlValidator();
