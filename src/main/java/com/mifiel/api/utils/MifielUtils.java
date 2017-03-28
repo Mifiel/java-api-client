@@ -1,7 +1,6 @@
 package com.mifiel.api.utils;
 
 import java.io.FileInputStream;
-import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
