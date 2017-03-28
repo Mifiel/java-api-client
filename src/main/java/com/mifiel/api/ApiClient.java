@@ -1,20 +1,21 @@
 package com.mifiel.api;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.validator.UrlValidator;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
@@ -26,14 +27,14 @@ public final class ApiClient {
 	private final static String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 	private final String DATE_FORMAT = "EEE, d MMM yyyy HH:mm:ss z";
 	private final String API_VERSION = "/api/v1/";
-	private final String CONTENT_TYPE = "application/x-www-form-urlencoded";//"application/json";
+	//private final String CONTENT_TYPE = "multipart/form-data";//"application/x-www-form-urlencoded";//"multipart/form-data";//"application/x-www-form-urlencoded";//"multipart/form-data";
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 	private final TimeZone gmtTime = TimeZone.getTimeZone("GMT");
 	private final UrlValidator urlValidator = new UrlValidator();
 	
 	private String appId;
     private String appSecret;
-    private String url = "https://www.mifiel.com/api/v1/";
+    private String url = "https://www.mifiel.com";
     
     public ApiClient(final String appId, final String appSecret) {
     	this.appId = appId;
@@ -42,34 +43,28 @@ public final class ApiClient {
     }
     
     public String get(final String path) throws MifielException {
-    	return sendRequest(HttpMethod.GET, path, "");
+    	return sendRequest(HttpMethod.GET, path, MultipartEntityBuilder.create().build());
     }
     
-    public String post(final String path, final String content) throws MifielException {
+    public String post(final String path, final HttpEntity content) throws MifielException {
     	return sendRequest(HttpMethod.POST, path, content);
     }
     
     public String delete(final String path) throws MifielException {
-    	return sendRequest(HttpMethod.DELETE, path, "");
+    	return sendRequest(HttpMethod.DELETE, path, MultipartEntityBuilder.create().build());
     }
 
-    public String put(final String path, final String content) throws MifielException {
+    public String put(final String path, final HttpEntity content) throws MifielException {
     	return sendRequest(HttpMethod.PUT, path, content);
     }
     
     private String sendRequest(final HttpMethod httpMethod, final String path,
-    							final String content) throws MifielException {
-    	final String requestUrl = url + API_VERSION + path;//"http://rve.org.uk/dumprequest";//
-        
+    							final HttpEntity body) throws MifielException {
+    	
+    	final String requestUrl = url + API_VERSION + path;
+    	final ContentType contentType = ContentType.getOrDefault(body);
         HttpRequestBase request = null;
-        HttpResponse response = null;
-        
-        StringEntity body;
-		try {
-			body = new StringEntity(content);
-		} catch (final UnsupportedEncodingException e) {
-			throw new MifielException("Error creating request body", e);
-		}
+        HttpResponse response = null;        
             
 		switch (httpMethod) {
 			case POST:
@@ -87,10 +82,19 @@ public final class ApiClient {
 				((HttpPut)request).setEntity(body);
 				break;
 			default:
-				throw new UnsupportedOperationException("Unsupported HttpMethod: " + httpMethod);
+				throw new MifielException("Unsupported HttpMethod: " + httpMethod);
 		}
 		
-		setAuthentication(httpMethod, path, content, request);
+		String content;
+		try {
+			final ByteArrayOutputStream out = new ByteArrayOutputStream();
+			body.writeTo(out);
+			content = out.toString();
+		} catch (Exception e) {
+			throw new MifielException("Error on body request", e);
+		}
+		
+		setAuthentication(httpMethod, path, content, request, contentType);
 		
 		try {
 			response = HttpClientBuilder.create().build().execute(request);
@@ -99,16 +103,17 @@ public final class ApiClient {
 		}
 		
 		final int responseStatusCode = response.getStatusLine().getStatusCode();
-		String httpResponse;
+		String httpResponse = "";
 		try {
-			httpResponse = EntityUtils.toString(response.getEntity());
+			final HttpEntity responseEntity = response.getEntity(); 
+			if (responseEntity != null) {
+				httpResponse = EntityUtils.toString(responseEntity);
+			}
 		} catch (final Exception e) {
 			throw new MifielException("Error reading Http Response", e);
 		}
 		
-		System.out.println(httpResponse);
-		
-		if (responseStatusCode == HttpStatus.SC_OK) {
+		if (MifielUtils.isSuccessfulHttpCode(responseStatusCode)) {
 			return httpResponse;
 		} else {
 			throw new MifielException("Status code error: " + responseStatusCode, httpResponse);
@@ -118,36 +123,32 @@ public final class ApiClient {
     private void setAuthentication(final HttpMethod httpMethod,
     								final String path,
     								final String content, 
-    								final HttpRequestBase request) throws MifielException {
+    								final HttpRequestBase request,
+    								final ContentType contentTypeBody) throws MifielException {
+    	final String contentType = contentTypeBody.toString();
     	final String date = dateFormat.format(new Date());    	
-    	final String contentMd5 = MifielUtils.calculateMD5(content);
-    	final String signature = getSignature(httpMethod, path, contentMd5, date);
+    	final String contentMd5 = "";//MifielUtils.calculateMD5(content);
+    	final String signature = getSignature(httpMethod, path, contentMd5, date, request, contentType);
     	final String authorizationHeader = String.format("APIAuth %s:%s", appId, signature);
-    	
-    	System.out.println("signature = " + signature);
-    	System.out.println("Date = " + date);
-    	System.out.println("Content-MD5 = " + contentMd5);
-    	System.out.println("Authorization = " + authorizationHeader);
-    	System.out.println("Content-Type = " + CONTENT_TYPE);
-    	System.out.println("content = " + content);
     	
     	request.addHeader("Authorization", authorizationHeader);
     	request.addHeader("Content-MD5", contentMd5);
-    	request.addHeader("Content-Type", CONTENT_TYPE);
+    	request.addHeader("Content-Type", contentType);
     	request.addHeader("Date", date);
     }
     
     private String getSignature(final HttpMethod httpMethod,
     							final String path,
     							final String contentMd5,
-    							final String date) throws MifielException {
+    							final String date,
+    							final HttpRequestBase request,
+    							final String contentType) throws MifielException {
     	final String canonicalString = String.format("%s,%s,%s,%s,%s", 
 		    								httpMethod.toString(),
-		    								CONTENT_TYPE,
+		    								contentType,
 		    								contentMd5,
 		    								API_VERSION + path,
 		    								date);
-    	System.out.println("canonical_string = " + canonicalString);
     	return MifielUtils.calculateHMAC(appSecret, canonicalString, HMAC_SHA1_ALGORITHM);
     }
 	    

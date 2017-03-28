@@ -1,18 +1,22 @@
 package com.mifiel.api.dao;
 
+import java.io.File;
 import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 import com.mifiel.api.ApiClient;
 import com.mifiel.api.exception.MifielException;
 import com.mifiel.api.objects.Certificate;
-import com.mifiel.api.objects.Document;
 import com.mifiel.api.utils.MifielUtils;
 
 public class Certificates extends BaseObjectDAO<Certificate> {
+	
 	private final String CERTIFICATE_CANONICAL_NAME = Certificate.class.getCanonicalName();
+	private final String CERTIFICATES_PATH = "keys";
 
 	public Certificates(final ApiClient apiClient) {
 		super(apiClient);
@@ -20,30 +24,43 @@ public class Certificates extends BaseObjectDAO<Certificate> {
 
 	@Override
 	public Certificate find(final String id) throws MifielException {
-		final String response = apiClient.get("documents/" + id);
-		final Certificate certificate = (Certificate) MifielUtils.convertJsonToObject(response, CERTIFICATE_CANONICAL_NAME);
-		return certificate;
+		final String response = apiClient.get(CERTIFICATES_PATH + "/" + id);
+		return (Certificate) MifielUtils.convertJsonToObject(response, CERTIFICATE_CANONICAL_NAME);
 	}
 
 	@Override
 	public List<Certificate> findAll() throws MifielException {
-		// TODO Auto-generated method stub
-		return null;
+		final String response = apiClient.get(CERTIFICATES_PATH);
+		return (List<Certificate>)(Object)MifielUtils.convertJsonToObjects(response, CERTIFICATE_CANONICAL_NAME);
 	}
-
-	@Override
-	public void save(final Certificate certificate) throws MifielException {
-		// TODO Auto-generated method stub
-	}
-
+	
 	@Override
 	public void delete(final String id) throws MifielException {
-		// TODO Auto-generated method stub
+		apiClient.delete(CERTIFICATES_PATH + "/" + id);
 	}
 
 	@Override
-	protected String buildHttpBody(final Certificate certificate) throws MifielException {
-		return null;
+	public Certificate save(final Certificate certificate) throws MifielException {
+		final HttpEntity httpContent = buildHttpBody(certificate);
+		final String response = apiClient.post(CERTIFICATES_PATH, httpContent);
+		return (Certificate)MifielUtils.convertJsonToObject(response, CERTIFICATE_CANONICAL_NAME);
+	}
+	
+	private HttpEntity buildHttpBody(final Certificate certificate) 
+										throws MifielException {
+
+		final MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
+		entityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+		final String fileName = certificate.getFile();
+
+		if (!StringUtils.isEmpty(fileName)) {
+			entityBuilder.addBinaryBody("file", new File(fileName));
+		} else {
+			throw new MifielException("You must provide a certificate file name");
+		}
+		
+		return entityBuilder.build();
 	}
 
 }

@@ -13,12 +13,14 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
 import com.mifiel.api.exception.MifielException;
 
 public final class MifielUtils {
+	public final static String PDF_CONTENT_TYPE = "application/pdf";
 	private final static ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
 	private final static ObjectMapper objectMapper = new ObjectMapper();
 	
@@ -82,16 +84,14 @@ public final class MifielUtils {
 		}
 	}
 	
-	public static void appendParamToHttpBody(final StringBuilder httpBody, 
-											final String paramName, final String paramValue) 
-											throws MifielException  {
-		try {
-			final String separator = httpBody.length() == 0 ? "" : "&";
-			if (!StringUtils.isEmpty(paramValue)) {
-				httpBody.append(separator + paramName + "=" + paramValue);//URLEncoder.encode(paramValue, "UTF-8"));
-			}
-		} catch (final Exception e) {
-			throw new MifielException("Error appending param to HTTP body", e);
+	public static void appendTextParamToHttpBody(final MultipartEntityBuilder entityBuilder, 
+												final String paramName, final String paramValue) {
+		if (!StringUtils.isEmpty(paramValue)) {
+			entityBuilder.addTextBody(paramName, paramValue);
 		}
+	}
+
+	public static boolean isSuccessfulHttpCode(final int httpStatusCode) {
+		return httpStatusCode >= 200 && httpStatusCode < 300;
 	}
 }

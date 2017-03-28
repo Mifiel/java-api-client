@@ -9,11 +9,13 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "id", "type_of", "cer_hex", "owner", "tax_id", "expires_at", "expired" })
+@JsonPropertyOrder({ "id", "file", "type_of", "cer_hex", "owner", "tax_id", "expires_at", "expired" })
 public class Certificate {
 
 	@JsonProperty("id")
 	private String id;
+	@JsonProperty("file")
+	private String file;
 	@JsonProperty("type_of")
 	private String typeOf;
 	@JsonProperty("cer_hex")
@@ -37,6 +39,16 @@ public class Certificate {
 	@JsonProperty("id")
 	public void setId(String id) {
 		this.id = id;
+	}
+	
+	@JsonProperty("file")
+	public String getFile() {
+		return file;
+	}
+
+	@JsonProperty("file")
+	public void setFile(String file) {
+		this.file = file;
 	}
 
 	@JsonProperty("type_of")

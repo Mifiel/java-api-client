@@ -1,11 +1,22 @@
 package com.mifiel.api;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.DatatypeConverter;
+
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.util.EntityUtils;
+
 import com.mifiel.api.dao.Certificates;
 import com.mifiel.api.dao.Documents;
+import com.mifiel.api.dao.SignatureResponse;
 import com.mifiel.api.exception.MifielException;
 import com.mifiel.api.objects.Certificate;
 import com.mifiel.api.objects.Data;
@@ -16,50 +27,30 @@ import com.mifiel.api.utils.MifielUtils;
 
 //TODO: Change to java 1.6
 public class App {
-    public static void main( String[] args ) throws MifielException {
-        final String appId = "1de27e16406cf9b485a1cd9b19a51015049fc245";
-        final String appSecret = "ul2NEPJyNKD/3MILk5K2IKFb45I7dsZvC21DkvOkNDyhVM0SzBUeeXsDloGoWoIoVBLpayIzTEvRg50YDvI5/A==";
+    public static void main( String[] args ) throws MifielException, IOException {
+        final String appId = "1de27e16406cf9b485a1cd9b19a51015049fc245";//"e35ed52c6571362d675095bf4b15fa0756c03099";//"1de27e16406cf9b485a1cd9b19a51015049fc245";
+        final String appSecret = "ul2NEPJyNKD/3MILk5K2IKFb45I7dsZvC21DkvOkNDyhVM0SzBUeeXsDloGoWoIoVBLpayIzTEvRg50YDvI5/A==";//"dPG1uZhGghNRVDen4YWlUGhqWn7ZqEoW1L7nMzhtGOQr5HDy0u57NlO5ixHrA9K0Tw0azxCqQS5plSAkrrooag==";//"ul2NEPJyNKD/3MILk5K2IKFb45I7dsZvC21DkvOkNDyhVM0SzBUeeXsDloGoWoIoVBLpayIzTEvRg50YDvI5/A==";
         
-        System.out.println("appId = " + appId);
         ApiClient apiClient = new ApiClient(appId, appSecret);
-        apiClient.setUrl("https://sandbox.mifiel.com/");
+        apiClient.setUrl("https://sandbox.mifiel.com");//"https://cede3319.ngrok.io");//"https://sandbox.mifiel.com/");
+        
+        String documentPath = "/home/enrique/Desktop/test.cer";
+        //Certificates cers = new Certificates(apiClient);
+        //Certificate cer = new Certificate();
+        //cer.setFile(documentPath);
         
         Documents docs = new Documents(apiClient);
-        Document doc = new Document();
-        Signature signature = new Signature();
-        signature.setEmail("test@test.com");
-        List<Signature> signatures = new ArrayList<Signature>();
-        signatures.add(signature);
-        doc.setSignatures(signatures);
-        //doc.setFile("/home/enrique/Desktop/20170201-50147577.pdf");
-        doc.setFileFileName("20170201-50147577.pdf");
-        doc.setOriginalHash(MifielUtils.getDocumentHash("/home/enrique/Desktop/20170201-50147577.pdf"));
         
         try {
-        	//List<Document> docList = docs.findAll();
-        	//for (Document document : docList) {
-			//	docs.delete(document.getId());
-			//}
+        	List<Document> docList = docs.findAll();
+        	if (docList.size() > 0) {
+        		SignatureResponse reqSig = docs.requestSignature(docList.get(0).getId(), "enrique@test.com", "enrique2@test.com");
+        		System.out.println(reqSig);
+        	}
         	
-        	docs.save(doc);
-        } catch (MifielException e) {
+        } catch (final MifielException e) {
+        	System.out.println(e);
         	System.out.println(e.getMifielError());
         }
-        //List<Document> doc = docs.findAll();
-        //docs.find("1");
-        
-        //System.out.println(doc);
-        
-        //Document doc = new Document();
-        //doc.setFile("123");
-        //Owner owner = new Owner();
-        //owner.setEmail("asd@asd.com");
-        //doc.setOwner(owner);
-        
-        //String json = MifielUtils.convertObjectToJson(doc);
-        //System.out.println(json);
-        
-        //Document doc2 = (Document) MifielUtils.convertJsonToObject(json, Document.class.getCanonicalName());
-        //System.out.println(doc2);
     }
 }

@@ -10,7 +10,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "id", "original_hash", "file_file_name", "signed_by_all", "signed", "signed_at", "status", "owner",
+@JsonPropertyOrder({ "id", "original_hash", "name", "signed_by_all", "signed", "signed_at", "status", "owner",
 		"callback_url", "file", "file_download", "file_signed", "file_signed_download", "file_zipped", "signatures" })
 public class Document {
 
@@ -18,8 +18,8 @@ public class Document {
 	private String id;
 	@JsonProperty("original_hash")
 	private String originalHash;
-	@JsonProperty("file_file_name")
-	private String fileFileName;
+	@JsonProperty("name")
+	private String fileName;
 	@JsonProperty("signed_by_all")
 	private Boolean signedByAll;
 	@JsonProperty("signed")
@@ -67,14 +67,14 @@ public class Document {
 		this.originalHash = originalHash;
 	}
 
-	@JsonProperty("file_file_name")
-	public String getFileFileName() {
-		return fileFileName;
+	@JsonProperty("name")
+	public String getFileName() {
+		return fileName;
 	}
 
-	@JsonProperty("file_file_name")
-	public void setFileFileName(String fileFileName) {
-		this.fileFileName = fileFileName;
+	@JsonProperty("name")
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 	@JsonProperty("signed_by_all")
@@ -209,7 +209,7 @@ public class Document {
 
 	@Override
 	public String toString() {
-		return "Document [id=" + id + ", originalHash=" + originalHash + ", fileFileName=" + fileFileName
+		return "Document [id=" + id + ", originalHash=" + originalHash + ", fileName=" + fileName
 				+ ", signedByAll=" + signedByAll + ", signed=" + signed + ", signedAt=" + signedAt + ", status="
 				+ status + ", owner=" + owner + ", callbackUrl=" + callbackUrl + ", file=" + file + ", fileDownload="
 				+ fileDownload + ", fileSigned=" + fileSigned + ", fileSignedDownload=" + fileSignedDownload
