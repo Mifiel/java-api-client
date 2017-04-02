@@ -1,6 +1,8 @@
 package com.mifiel.api.utils;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -10,9 +12,13 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.ParseException;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
@@ -92,5 +98,22 @@ public final class MifielUtils {
 
 	public static boolean isSuccessfulHttpCode(final int httpStatusCode) {
 		return httpStatusCode >= 200 && httpStatusCode < 300;
+	}
+	
+	public static String entityToString(final HttpEntity entity) throws MifielException {
+		try {
+			return EntityUtils.toString(entity);
+		} catch (final Exception e) {
+			throw new MifielException("Error converting Entity to String", e);
+		}
+	}
+
+	public static void saveEntityResponseToFile(final HttpEntity entityResponse, final String localPath) throws MifielException {
+		try {
+			final byte[] fileContent = EntityUtils.toByteArray(entityResponse);
+			FileUtils.writeByteArrayToFile(new File(localPath), fileContent);
+		} catch (final Exception e) {
+			throw new MifielException("Error saving file", e);
+		}
 	}
 }

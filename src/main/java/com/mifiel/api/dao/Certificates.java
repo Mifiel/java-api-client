@@ -24,13 +24,15 @@ public class Certificates extends BaseObjectDAO<Certificate> {
 
     @Override
     public Certificate find(final String id) throws MifielException {
-        final String response = apiClient.get(CERTIFICATES_PATH + "/" + id);
+    	final HttpEntity entityResponse = apiClient.get(CERTIFICATES_PATH + "/" + id);
+        final String response = MifielUtils.entityToString(entityResponse);
         return (Certificate) MifielUtils.convertJsonToObject(response, CERTIFICATE_CANONICAL_NAME);
     }
 
     @Override
     public List<Certificate> findAll() throws MifielException {
-        final String response = apiClient.get(CERTIFICATES_PATH);
+    	final HttpEntity entityResponse = apiClient.get(CERTIFICATES_PATH);
+    	final String response = MifielUtils.entityToString(entityResponse);
         return (List<Certificate>)(Object)MifielUtils.convertJsonToObjects(response, CERTIFICATE_CANONICAL_NAME);
     }
     
@@ -42,7 +44,8 @@ public class Certificates extends BaseObjectDAO<Certificate> {
     @Override
     public Certificate save(final Certificate certificate) throws MifielException {
         final HttpEntity httpContent = buildHttpBody(certificate);
-        final String response = apiClient.post(CERTIFICATES_PATH, httpContent);
+        final HttpEntity entityResponse = apiClient.post(CERTIFICATES_PATH, httpContent);
+        final String response = MifielUtils.entityToString(entityResponse);
         return (Certificate)MifielUtils.convertJsonToObject(response, CERTIFICATE_CANONICAL_NAME);
     }
     

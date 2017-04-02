@@ -29,26 +29,39 @@ public class Documents extends BaseObjectDAO<Document> {
 
     @Override
     public Document find(final String id) throws MifielException {
-        final String response = apiClient.get(DOCUMENTS_PATH + "/" + id);
+    	final HttpEntity entityResponse = apiClient.get(DOCUMENTS_PATH + "/" + id);
+        final String response = MifielUtils.entityToString(entityResponse);
         return (Document) MifielUtils.convertJsonToObject(response, DOCUMENT_CANONICAL_NAME);
     }
 
     @Override
     public List<Document> findAll() throws MifielException {
-        final String response = apiClient.get(DOCUMENTS_PATH);
+    	final HttpEntity entityResponse = apiClient.get(DOCUMENTS_PATH);
+        final String response = MifielUtils.entityToString(entityResponse);
         return (List<Document>)(Object)MifielUtils.convertJsonToObjects(response, DOCUMENT_CANONICAL_NAME);
     }   
 
     @Override
     public void delete(final String id) throws MifielException {
-        apiClient.delete("documents/" + id);
+        apiClient.delete(DOCUMENTS_PATH + "/" + id);
+    }
+    
+    public void saveFile(final String id, final String localPath) throws MifielException {
+        final HttpEntity entityResponse = apiClient.get(DOCUMENTS_PATH + "/" + id + "/file");		
+		MifielUtils.saveEntityResponseToFile(entityResponse, localPath);
+    }
+    
+    public void saveXml(final String id, final String localPath) throws MifielException {
+		final HttpEntity entityResponse = apiClient.get(DOCUMENTS_PATH + "/" + id + "/xml");
+		MifielUtils.saveEntityResponseToFile(entityResponse, localPath);
     }
 
     @Override
     public Document save(final Document document) throws MifielException {
         if (StringUtils.isEmpty(document.getId())) {
         	final HttpEntity httpContent = buildHttpBody(document);
-            final String response = apiClient.post(DOCUMENTS_PATH, httpContent);
+        	final HttpEntity entityResponse = apiClient.post(DOCUMENTS_PATH, httpContent);
+            final String response = MifielUtils.entityToString(entityResponse);
             return (Document)MifielUtils.convertJsonToObject(response, DOCUMENT_CANONICAL_NAME);
         } else {
         	final String json = MifielUtils.convertObjectToJson(document);
@@ -57,10 +70,11 @@ public class Documents extends BaseObjectDAO<Document> {
 			try {
 				httpContent = new StringEntity(json);
 			} catch (UnsupportedEncodingException e) {
-				throw new MifielException("Error creating Http Body for PUT verb");
+				throw new MifielException("Error creating Http Body for PUT verb", e);
 			}
         	
-            final String response = apiClient.put(DOCUMENTS_PATH, httpContent);
+			final HttpEntity entityResponse = apiClient.put(DOCUMENTS_PATH, httpContent);
+            final String response = MifielUtils.entityToString(entityResponse);
             return (Document)MifielUtils.convertJsonToObject(response, DOCUMENT_CANONICAL_NAME);
         }
     }
@@ -71,7 +85,8 @@ public class Documents extends BaseObjectDAO<Document> {
         entityBuilder.addTextBody("email", email);
         entityBuilder.addTextBody("cc", cc);
         
-        final String response = apiClient.post(DOCUMENTS_PATH + "/" + id + "/request_signature", entityBuilder.build());
+        final HttpEntity entityResponse = apiClient.post(DOCUMENTS_PATH + "/" + id + "/request_signature", entityBuilder.build());
+        final String response = MifielUtils.entityToString(entityResponse);
         final SignatureResponse signatureResponse = (SignatureResponse) MifielUtils.convertJsonToObject(response, SIGNATURE_RESPONSE_CANONICAL_NAME);
         return signatureResponse;
     }

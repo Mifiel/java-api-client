@@ -1,6 +1,7 @@
 package com.mifiel.api;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -15,6 +16,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
@@ -25,7 +27,7 @@ import com.mifiel.api.utils.MifielUtils;
 
 public final class ApiClient {
     private final static String HMAC_SHA1_ALGORITHM = "HmacSHA1";
-    private final String DATE_FORMAT = "EEE, d MMM yyyy HH:mm:ss z";
+    private final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
     private final String API_VERSION = "/api/v1/";
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
     private final TimeZone gmtTime = TimeZone.getTimeZone("GMT");
@@ -41,29 +43,30 @@ public final class ApiClient {
         dateFormat.setTimeZone(gmtTime);
     }
     
-    public String get(final String path) throws MifielException {
+    public HttpEntity get(final String path) throws MifielException {
         return sendRequest(HttpMethod.GET, path, MultipartEntityBuilder.create().build());
     }
     
-    public String post(final String path, final HttpEntity content) throws MifielException {
+    public HttpEntity post(final String path, final HttpEntity content) throws MifielException {
         return sendRequest(HttpMethod.POST, path, content);
     }
     
-    public String delete(final String path) throws MifielException {
+    public HttpEntity delete(final String path) throws MifielException {
         return sendRequest(HttpMethod.DELETE, path, MultipartEntityBuilder.create().build());
     }
 
-    public String put(final String path, final HttpEntity content) throws MifielException {
+    public HttpEntity put(final String path, final HttpEntity content) throws MifielException {
         return sendRequest(HttpMethod.PUT, path, content);
     }
     
-    private String sendRequest(final HttpMethod httpMethod, final String path,
+    private HttpEntity sendRequest(final HttpMethod httpMethod, final String path,
                                 final HttpEntity body) throws MifielException {
         
         final String requestUrl = url + API_VERSION + path;
         final ContentType contentType = ContentType.getOrDefault(body);
         HttpRequestBase request = null;
-        HttpResponse response = null;        
+        HttpResponse response = null;
+        HttpEntity entityResponse = null;
             
         switch (httpMethod) {
             case POST:
@@ -102,20 +105,25 @@ public final class ApiClient {
         }
         
         final int responseStatusCode = response.getStatusLine().getStatusCode();
-        String httpResponse = "";
-        try {
-            final HttpEntity responseEntity = response.getEntity(); 
-            if (responseEntity != null) {
-                httpResponse = EntityUtils.toString(responseEntity);
-            }
-        } catch (final Exception e) {
-            throw new MifielException("Error reading Http Response", e);
+        
+        entityResponse = response.getEntity();
+        if (entityResponse == null) {
+        	try {
+				entityResponse = new StringEntity("");
+			} catch (UnsupportedEncodingException e) {
+				throw new MifielException("Error creating an empty Entity", e);
+			}
         }
         
         if (MifielUtils.isSuccessfulHttpCode(responseStatusCode)) {
-            return httpResponse;
+            return entityResponse;
         } else {
-            throw new MifielException("Status code error: " + responseStatusCode, httpResponse);
+            try {
+				throw new MifielException("Status code error: " + responseStatusCode, 
+											EntityUtils.toString(entityResponse));
+			} catch (final Exception e) {
+				throw new MifielException("Status code error: " + responseStatusCode, e);
+			}
         }        
     }
     
