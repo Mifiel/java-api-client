@@ -1,11 +1,13 @@
 package com.mifiel.api.dao;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 
@@ -44,9 +46,23 @@ public class Documents extends BaseObjectDAO<Document> {
 
     @Override
     public Document save(final Document document) throws MifielException {
-        final HttpEntity httpContent = buildHttpBody(document);
-        final String response = apiClient.post(DOCUMENTS_PATH, httpContent);
-        return (Document)MifielUtils.convertJsonToObject(response, DOCUMENT_CANONICAL_NAME);
+        if (StringUtils.isEmpty(document.getId())) {
+        	final HttpEntity httpContent = buildHttpBody(document);
+            final String response = apiClient.post(DOCUMENTS_PATH, httpContent);
+            return (Document)MifielUtils.convertJsonToObject(response, DOCUMENT_CANONICAL_NAME);
+        } else {
+        	final String json = MifielUtils.convertObjectToJson(document);
+        	
+        	StringEntity httpContent;
+			try {
+				httpContent = new StringEntity(json);
+			} catch (UnsupportedEncodingException e) {
+				throw new MifielException("Error creating Http Body for PUT verb");
+			}
+        	
+            final String response = apiClient.put(DOCUMENTS_PATH, httpContent);
+            return (Document)MifielUtils.convertJsonToObject(response, DOCUMENT_CANONICAL_NAME);
+        }
     }
     
     public SignatureResponse requestSignature(final String id, final String email, 
