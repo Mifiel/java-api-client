@@ -15,6 +15,7 @@ import com.mifiel.api.ApiClient;
 import com.mifiel.api.exception.MifielException;
 import com.mifiel.api.objects.Document;
 import com.mifiel.api.objects.Signature;
+import com.mifiel.api.objects.SignatureResponse;
 import com.mifiel.api.utils.MifielUtils;
 
 public class Documents extends BaseObjectDAO<Document> {

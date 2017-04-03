@@ -9,16 +9,15 @@ import org.junit.Test;
 
 import com.mifiel.api.dao.Certificates;
 import com.mifiel.api.dao.Documents;
-import com.mifiel.api.dao.SignatureResponse;
 import com.mifiel.api.exception.MifielException;
 import com.mifiel.api.objects.Document;
+import com.mifiel.api.objects.SignatureResponse;
 import com.mifiel.api.utils.MifielUtils;
 
-public class ApiClientTest {
+public class DocumentsTest {
     
     private static ApiClient apiClient;
     private static Documents docs;
-    private static Certificates keys;
     private static String pdfFilePath;
     
     @BeforeClass
@@ -26,12 +25,9 @@ public class ApiClientTest {
         final String appId = "585763293c61baf5ac9d3819e4610dc25e76cade";
         final String appSecret = "SyD1xoS4JkaPoDPbfTnUG2QQ20SIV+WWxdQIZPSiH1WrK2E6LrWhWIjGeHeuSfxtteNsgQZo+Xq+fdriJexG7g==";
         
-        apiClient = new ApiClient(appId, appSecret);
-        
-        docs = new Documents(apiClient);
-        keys = new Certificates(apiClient);
-        
         pdfFilePath = "/home/enrique/Desktop/20170201-50147577.pdf";
+        apiClient = new ApiClient(appId, appSecret);
+        docs = new Documents(apiClient);
     }
 
     @Test(expected=MifielException.class)

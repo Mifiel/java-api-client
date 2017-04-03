@@ -1,4 +1,4 @@
-package com.mifiel.api.dao;
+package com.mifiel.api.objects;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,8 +8,6 @@ import org.codehaus.jackson.annotate.JsonAnySetter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
-
-import com.mifiel.api.objects.Data;
 
 @JsonPropertyOrder({ "status", "message", "data" })
 public class SignatureResponse {
