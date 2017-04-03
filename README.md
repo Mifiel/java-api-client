@@ -44,7 +44,7 @@ Document methods:
 - Find all:
 
   ```java
-  	import java.util.List;
+    import java.util.List;
     import com.mifiel.api.dao.Documents;
     import com.mifiel.api.objects.Document;
     
@@ -77,9 +77,9 @@ Document methods:
     signature1.setEmail("signer1@email.com");
     signature1.setTaxId("AAA010101AAA");
     
-    signature1.setSignature("Signer 2");
-    signature1.setEmail("signer2@email.com");
-    signature1.setTaxId("AAA010102AAA");
+    signature2.setSignature("Signer 2");
+    signature2.setEmail("signer2@email.com");
+    signature2.setTaxId("AAA010102AAA");
     
     signatures.add(signature1);
     signatures.add(signature2);
