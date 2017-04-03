@@ -58,7 +58,7 @@ Document methods:
 > Only **file** or **original_hash** must be provided.
 
   ```java
-  	import java.util.List;
+    import java.util.List;
     import java.util.ArrayList;
     import com.mifiel.api.dao.Documents;
     import com.mifiel.api.objects.Document;
@@ -139,7 +139,7 @@ Certificate methods:
 - Find all:
 
   ```java
-  	import java.util.List;
+    import java.util.List;
     import com.mifiel.api.dao.Certificates;
     import com.mifiel.api.objects.Certificate;
     
