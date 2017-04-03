@@ -38,7 +38,7 @@ Document methods:
     document.getOriginalHash();
     document.getFile();
     document.getFileSigned();
-    # ...
+    // ...
   ```
 
 - Find all:
@@ -131,7 +131,7 @@ Certificate methods:
     Certificate certificate = certificates.find("id");
     certificate.getCerHex();
     certificate.getTypeOf();
-    # ...
+    // ...
   ```
 
 - Find all:
