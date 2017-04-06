@@ -2,7 +2,6 @@ package com.mifiel.api.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -12,11 +11,11 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
-import org.apache.http.ParseException;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -36,7 +35,7 @@ public final class MifielUtils {
 			byte[] fileContent = IOUtils.toByteArray(new FileInputStream(filePath));
 			final MessageDigest digest = MessageDigest.getInstance("SHA-256");
 			digest.update(fileContent);
-			return new String(Base64.encodeBase64(digest.digest()));
+			return new String(Hex.encodeHex(digest.digest()));
 		} catch (final Exception e) {
 			throw new MifielException("Error calculating Hash(SHA-256)", e);
 		}

@@ -7,7 +7,6 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.mifiel.api.dao.Certificates;
 import com.mifiel.api.dao.Documents;
 import com.mifiel.api.exception.MifielException;
 import com.mifiel.api.objects.Document;
