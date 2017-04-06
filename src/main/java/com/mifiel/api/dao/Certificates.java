@@ -14,7 +14,7 @@ import com.mifiel.api.objects.Certificate;
 import com.mifiel.api.utils.MifielUtils;
 
 public class Certificates extends BaseObjectDAO<Certificate> {
-    
+
     private final String CERTIFICATE_CANONICAL_NAME = Certificate.class.getCanonicalName();
     private final String CERTIFICATES_PATH = "keys";
 
@@ -24,18 +24,18 @@ public class Certificates extends BaseObjectDAO<Certificate> {
 
     @Override
     public Certificate find(final String id) throws MifielException {
-    	final HttpEntity entityResponse = apiClient.get(CERTIFICATES_PATH + "/" + id);
+        final HttpEntity entityResponse = apiClient.get(CERTIFICATES_PATH + "/" + id);
         final String response = MifielUtils.entityToString(entityResponse);
         return (Certificate) MifielUtils.convertJsonToObject(response, CERTIFICATE_CANONICAL_NAME);
     }
 
     @Override
     public List<Certificate> findAll() throws MifielException {
-    	final HttpEntity entityResponse = apiClient.get(CERTIFICATES_PATH);
-    	final String response = MifielUtils.entityToString(entityResponse);
-        return (List<Certificate>)(Object)MifielUtils.convertJsonToObjects(response, CERTIFICATE_CANONICAL_NAME);
+        final HttpEntity entityResponse = apiClient.get(CERTIFICATES_PATH);
+        final String response = MifielUtils.entityToString(entityResponse);
+        return (List<Certificate>) (Object) MifielUtils.convertJsonToObjects(response, CERTIFICATE_CANONICAL_NAME);
     }
-    
+
     @Override
     public void delete(final String id) throws MifielException {
         apiClient.delete(CERTIFICATES_PATH + "/" + id);
@@ -46,11 +46,10 @@ public class Certificates extends BaseObjectDAO<Certificate> {
         final HttpEntity httpContent = buildHttpBody(certificate);
         final HttpEntity entityResponse = apiClient.post(CERTIFICATES_PATH, httpContent);
         final String response = MifielUtils.entityToString(entityResponse);
-        return (Certificate)MifielUtils.convertJsonToObject(response, CERTIFICATE_CANONICAL_NAME);
+        return (Certificate) MifielUtils.convertJsonToObject(response, CERTIFICATE_CANONICAL_NAME);
     }
-    
-    private HttpEntity buildHttpBody(final Certificate certificate) 
-                                        throws MifielException {
+
+    private HttpEntity buildHttpBody(final Certificate certificate) throws MifielException {
 
         final MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
         entityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -62,7 +61,7 @@ public class Certificates extends BaseObjectDAO<Certificate> {
         } else {
             throw new MifielException("You must provide a certificate file name");
         }
-        
+
         return entityBuilder.build();
     }
 
