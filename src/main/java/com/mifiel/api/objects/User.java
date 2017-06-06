@@ -3,6 +3,7 @@ package com.mifiel.api.objects;
 public class User {
     private String email;
     private String name;
+    private String id;
 
     public String getEmail() {
         return email;
@@ -20,9 +21,17 @@ public class User {
         this.name = name;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
-        return "User [email=" + email + ", name=" + name + "]";
+        return "User [id=" + id + ", email=" + email + ", name=" + name + "]";
     }
 
     @Override

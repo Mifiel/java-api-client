@@ -104,6 +104,17 @@ public class Documents extends BaseObjectDAO<Document> {
         final String fileName = document.getFileName();
         final String originalHash = document.getOriginalHash();
 
+        if (signatures != null) {
+            for (int i = 0; i < signatures.size(); i++) {
+                MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][name]",
+                        signatures.get(i).getSignature());
+                MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][email]",
+                        signatures.get(i).getEmail());
+                MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][tax_id]",
+                        signatures.get(i).getTaxId());
+            }
+        }
+        
         if (!StringUtils.isEmpty(filePath)) {
             final File pdfFile = new File(filePath);
 
@@ -114,17 +125,6 @@ public class Documents extends BaseObjectDAO<Document> {
             entityBuilder.addTextBody("name", fileName);
 
             MifielUtils.appendTextParamToHttpBody(entityBuilder, "callback_url", document.getCallbackUrl());
-
-            if (signatures != null) {
-                for (int i = 0; i < signatures.size(); i++) {
-                    MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][name]",
-                            signatures.get(i).getSignature());
-                    MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][email]",
-                            signatures.get(i).getEmail());
-                    MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][tax_id]",
-                            signatures.get(i).getTaxId());
-                }
-            }
         } else {
             throw new MifielException("You must provide file or original hash and file name");
         }
