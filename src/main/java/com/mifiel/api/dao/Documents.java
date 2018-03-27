@@ -103,7 +103,8 @@ public class Documents extends BaseObjectDAO<Document> {
         final String filePath = document.getFile();
         final String fileName = document.getFileName();
         final String originalHash = document.getOriginalHash();
-
+        final String callbackUrl = document.getCallbackUrl();
+        
         if (signatures != null) {
             for (int i = 0; i < signatures.size(); i++) {
                 MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][name]",
@@ -115,16 +116,17 @@ public class Documents extends BaseObjectDAO<Document> {
             }
         }
         
+        if (callbackUrl != null) {
+            MifielUtils.appendTextParamToHttpBody(entityBuilder, "callback_url", callbackUrl);
+        }
+        
         if (!StringUtils.isEmpty(filePath)) {
             final File pdfFile = new File(filePath);
-
             entityBuilder.addBinaryBody("file", pdfFile, ContentType.create(MifielUtils.PDF_CONTENT_TYPE),
                     pdfFile.getName());
         } else if (!StringUtils.isEmpty(originalHash) && !StringUtils.isEmpty(fileName)) {
             entityBuilder.addTextBody("original_hash", originalHash);
             entityBuilder.addTextBody("name", fileName);
-
-            MifielUtils.appendTextParamToHttpBody(entityBuilder, "callback_url", document.getCallbackUrl());
         } else {
             throw new MifielException("You must provide file or original hash and file name");
         }
