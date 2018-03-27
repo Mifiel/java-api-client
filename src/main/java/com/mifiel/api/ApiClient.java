@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -29,7 +30,7 @@ public final class ApiClient {
     private final static String HMAC_SHA1_ALGORITHM = "HmacSHA1";
     private final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
     private final String API_VERSION = "/api/v1/";
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH);
     private final TimeZone gmtTime = TimeZone.getTimeZone("GMT");
     private final UrlValidator urlValidator = new UrlValidator();
 
