@@ -3,6 +3,7 @@ package com.mifiel.api.objects;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 import org.codehaus.jackson.annotate.JsonAnyGetter;
 import org.codehaus.jackson.annotate.JsonAnySetter;
@@ -18,7 +19,7 @@ public class Document {
     private String id;
     @JsonProperty("original_hash")
     private String originalHash;
-    @JsonProperty("name")
+    @JsonProperty("file_file_name")
     private String fileName;
     @JsonProperty("signed_by_all")
     private Boolean signedByAll;
@@ -46,6 +47,10 @@ public class Document {
     private List<Signature> signatures = null;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	@JsonProperty("allow_business")
+	private Boolean allowBusiness;
+    @JsonProperty("sign_callback_url")
+    private String signCallbackUrl;	
 
     @JsonProperty("id")
     public String getId() {
@@ -67,12 +72,12 @@ public class Document {
         this.originalHash = originalHash;
     }
 
-    @JsonProperty("name")
+    @JsonProperty("file_file_name")
     public String getFileName() {
         return fileName;
     }
 
-    @JsonProperty("name")
+    @JsonProperty("file_file_name")
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
@@ -212,8 +217,47 @@ public class Document {
         return "Document [id=" + id + ", originalHash=" + originalHash + ", fileName=" + fileName + ", signedByAll="
                 + signedByAll + ", signed=" + signed + ", signedAt=" + signedAt + ", status=" + status + ", owner="
                 + owner + ", callbackUrl=" + callbackUrl + ", file=" + file + ", fileDownload=" + fileDownload
-                + ", fileSigned=" + fileSigned + ", fileSignedDownload=" + fileSignedDownload + ", fileZipped="
-                + fileZipped + ", signatures=" + signatures + ", additionalProperties=" + additionalProperties + "]";
+                + ", fileSigned=" + fileSigned + ", fileSignedDownload=" + fileSignedDownload 
+				+ ", allow_business=" + allowBusiness + ", fileZipped=" + fileZipped 
+				+ ", signatures=" + signatures + ", additionalProperties=" + additionalProperties + "]";
     }
+	
+	@JsonProperty("allow_business")
+	public Boolean getAllowBusiness(){
+		return allowBusiness;
+	}
+	@JsonProperty("allow_business")
+	public void setAllowBusiness(Boolean allowBusiness){
+		this.allowBusiness = allowBusiness;
+	}
+	@JsonProperty("sign_callback_url")
+    public String getSignCallbackUrl() {
+		return signCallbackUrl;
+	}
+	@JsonProperty("sign_callback_url")
+	public void setSignCallbackUrl(String signCallbackUrl) {
+		this.signCallbackUrl = signCallbackUrl;
+	}
+	
+	public List<Signer> signers(){
+		List<Signer> signers = null;
+		if( additionalProperties!=null && additionalProperties.get("signers")!=null ){
+			signers = new ArrayList<Signer>();
+            List<Object> signersLst = (List<Object>) additionalProperties.get("signers");
+            for(Object o : signersLst ){
+				Signer s = new Signer();
+				Map m = ( (Map) o );
+				s.setId( m.get("id")!=null ? m.get("id").toString() : null );
+				s.setName( m.get("name")!=null? m.get("name").toString() : null );
+				s.setEmail( m.get("email")!=null ?  m.get("email").toString() : null  );
+				s.setTaxId( m.get("tax_id")!=null ? m.get("tax_id").toString() : null );
+				s.setField( m.get("field")!=null ?  m.get("field").toString() : null );
+				s.setSigned( Boolean.parseBoolean( m.get("signed")!=null ?  m.get("signed").toString() : "false"  ) );
+				s.setWidgetId( m.get("widget_id")!=null ? m.get("widget_id").toString() : null );
+				signers.add( s );
+			}
+		}
+		return signers;
+	}
 
 }

@@ -17,9 +17,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
+
 
 import com.mifiel.api.exception.MifielException;
 
@@ -93,7 +95,7 @@ public final class MifielUtils {
     public static void appendTextParamToHttpBody(final MultipartEntityBuilder entityBuilder, final String paramName,
             final String paramValue) {
         if (!StringUtils.isEmpty(paramValue)) {
-            entityBuilder.addTextBody(paramName, paramValue);
+			entityBuilder.addTextBody(paramName,paramValue,ContentType.APPLICATION_JSON);
         }
     }
 
