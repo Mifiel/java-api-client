@@ -1,6 +1,8 @@
 package com.mifiel.api.dao;
 
 import java.io.File;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -49,6 +51,11 @@ public class Documents extends BaseObjectDAO<Document> {
 
     public void saveFile(final String id, final String localPath) throws MifielException {
         final HttpEntity entityResponse = apiClient.get(DOCUMENTS_PATH + "/" + id + "/file");
+        MifielUtils.saveEntityResponseToFile(entityResponse, localPath);
+    }
+	
+    public void saveSignedFile(final String id, final String localPath) throws MifielException {
+        final HttpEntity entityResponse = apiClient.get( new StringBuilder().append( DOCUMENTS_PATH ).append("/").append(id).append("/file_signed?download=true").toString() );
         MifielUtils.saveEntityResponseToFile(entityResponse, localPath);
     }
 
@@ -104,6 +111,9 @@ public class Documents extends BaseObjectDAO<Document> {
         final String fileName = document.getFileName();
         final String originalHash = document.getOriginalHash();
         final String callbackUrl = document.getCallbackUrl();
+		final String signCallbackUrl = document.getSignCallbackUrl();
+		
+		final String allowBusiness = document.getAllowBusiness()!=null? document.getAllowBusiness().toString() : "false";
         
         if (signatures != null) {
             for (int i = 0; i < signatures.size(); i++) {
@@ -119,6 +129,14 @@ public class Documents extends BaseObjectDAO<Document> {
         if (callbackUrl != null) {
             MifielUtils.appendTextParamToHttpBody(entityBuilder, "callback_url", callbackUrl);
         }
+		
+        if (signCallbackUrl != null) {
+            MifielUtils.appendTextParamToHttpBody(entityBuilder, "sign_callback_url", signCallbackUrl);
+        }		
+		
+		if( allowBusiness!=null){
+			MifielUtils.appendTextParamToHttpBody(entityBuilder, "allow_business", allowBusiness);
+		}
         
         if (!StringUtils.isEmpty(filePath)) {
             final File pdfFile = new File(filePath);
@@ -130,7 +148,6 @@ public class Documents extends BaseObjectDAO<Document> {
         } else {
             throw new MifielException("You must provide file or original hash and file name");
         }
-
         return entityBuilder.build();
     }
 
