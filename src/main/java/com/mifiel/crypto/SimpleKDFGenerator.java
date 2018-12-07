@@ -8,7 +8,6 @@ import org.bouncycastle.crypto.params.KDFParameters;
 public class SimpleKDFGenerator implements DerivationFunction {
 	private Digest digest;
 	private byte[] shared;
-	private int hLen;
 
 	/**
 	 * @param digest
@@ -16,7 +15,6 @@ public class SimpleKDFGenerator implements DerivationFunction {
 	 */
 	public SimpleKDFGenerator(Digest digest) {
 		this.digest = digest;
-		this.hLen = digest.getDigestSize();
 	}
 
 	@Override
