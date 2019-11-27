@@ -7,12 +7,16 @@ import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import com.mifiel.api.dao.Documents;
 import com.mifiel.api.exception.MifielException;
 import com.mifiel.api.objects.Document;
 import com.mifiel.api.objects.Signature;
 import com.mifiel.api.objects.SignatureResponse;
+import com.mifiel.api.utils.DigestType;
 import com.mifiel.api.utils.MifielUtils;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,6 +58,15 @@ public class DocumentsTest {
 
     @Test
     public void testGetAllDocumentsShouldReturnAList() throws MifielException {
+        setSandboxUrl();
+        final List<Document> allDocuments = docs.findAll();
+        assertTrue(allDocuments != null);
+    }
+
+    @Test
+    public void testGetAllDocumentsUsingHMACSHA256ShouldReturnAList() throws MifielException {
+        apiClient = new ApiClient(appId, appSecret, DigestType.SHA256);
+        docs = new Documents(apiClient);
         setSandboxUrl();
         final List<Document> allDocuments = docs.findAll();
         assertTrue(allDocuments != null);

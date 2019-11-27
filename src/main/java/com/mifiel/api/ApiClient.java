@@ -22,6 +22,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import com.mifiel.api.exception.MifielException;
 import com.mifiel.api.rest.HttpMethod;
+import com.mifiel.api.utils.DigestType;
 import com.mifiel.api.utils.MifielUtils;
 
 public final class ApiClient {
@@ -35,11 +36,17 @@ public final class ApiClient {
 
     private String appId;
     private String appSecret;
+    private DigestType digestType;
     private String url = "https://www.mifiel.com";
 
     public ApiClient(final String appId, final String appSecret) {
+       this(appId, appSecret, DigestType.SHA1);
+    }
+    
+    public ApiClient(String appId, String appSecret, DigestType digestType) {
         this.appId = appId;
         this.appSecret = appSecret;
+        this.digestType = digestType;
         dateFormat.setTimeZone(gmtTime);
     }
 
@@ -133,8 +140,8 @@ public final class ApiClient {
         final String date = dateFormat.format(new Date());
         final String contentMd5 = "";// MifielUtils.calculateMD5(content);
         final String signature = getSignature(httpMethod, path, contentMd5, date, request, contentType);
-        final String authorizationHeader = String.format("APIAuth %s:%s", appId, signature);
-
+        final String authorizationHeader = String.format("APIAuth-%s %s:%s", digestType.getHmac(), appId, signature);
+        
         request.addHeader("Authorization", authorizationHeader);
         request.addHeader("Content-MD5", contentMd5);
         request.addHeader("Content-Type", contentType);
@@ -145,7 +152,7 @@ public final class ApiClient {
             final String date, final HttpRequestBase request, final String contentType) throws MifielException {
         final String canonicalString = String.format("%s,%s,%s,%s,%s", httpMethod.toString(), contentType, contentMd5,
                 API_VERSION + path, date);
-        return MifielUtils.calculateHMAC(appSecret, canonicalString, HMAC_SHA1_ALGORITHM);
+        return MifielUtils.calculateHMAC(appSecret, canonicalString, digestType.getAlgorithm());
     }
 
     public void setUrl(final String url) throws MifielException {
