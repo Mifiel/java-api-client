@@ -127,5 +127,4 @@ public class Certificate {
                 + taxId + ", expiresAt=" + expiresAt + ", expired=" + expired + ", additionalProperties="
                 + additionalProperties + "]";
     }
-
 }

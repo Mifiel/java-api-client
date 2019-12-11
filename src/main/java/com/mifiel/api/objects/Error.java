@@ -67,5 +67,4 @@ public class Error {
         return "Error [status=" + status + ", error=" + error + ", errors=" + errors + ", additionalProperties="
                 + additionalProperties + "]";
     }
-
 }

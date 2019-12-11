@@ -26,6 +26,9 @@ public class Signature {
     private String signature;
     @JsonProperty("user")
     private User user;
+    @JsonProperty("certificate_number")
+    private String certificate_number;
+
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -107,6 +110,14 @@ public class Signature {
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    public String getCertificate_number() {
+        return certificate_number;
+    }
+
+    public void setCertificate_number(String certificate_number) {
+        this.certificate_number = certificate_number;
     }
 
     @Override

@@ -1,29 +1,22 @@
 package com.mifiel.api.dao;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-
 import com.mifiel.api.ApiClient;
 import com.mifiel.api.exception.MifielException;
 import com.mifiel.api.objects.Document;
-import com.mifiel.api.objects.Signature;
 import com.mifiel.api.objects.SignatureResponse;
 import com.mifiel.api.utils.MifielUtils;
 import java.util.Map;
 
 public class Documents extends BaseObjectDAO<Document> {
 
-    private final String DOCUMENT_CANONICAL_NAME = Document.class.getCanonicalName();
+    public static final String DOCUMENT_CANONICAL_NAME = Document.class.getCanonicalName();
     private final String SIGNATURE_RESPONSE_CANONICAL_NAME = SignatureResponse.class.getCanonicalName();
-    private final String DOCUMENTS_PATH = "documents";
+    public static final String DOCUMENTS_PATH = "documents";
 
     public Documents(final ApiClient apiClient) {
         super(apiClient);
@@ -59,26 +52,26 @@ public class Documents extends BaseObjectDAO<Document> {
     }
 
     @Override
-    public Document save(final Document document) throws MifielException {
+    public Document save(Document document) throws MifielException {
+        final HttpEntity entityResponse;
         if (StringUtils.isEmpty(document.getId())) {
-            final HttpEntity httpContent = buildHttpBody(document);
-            final HttpEntity entityResponse = apiClient.post(DOCUMENTS_PATH, httpContent);
-            final String response = MifielUtils.entityToString(entityResponse);
-            return (Document) MifielUtils.convertJsonToObject(response, DOCUMENT_CANONICAL_NAME);
+            final HttpEntity httpContent = MifielUtils.buildHttpBody(document);
+            entityResponse = apiClient.post(DOCUMENTS_PATH, httpContent);
         } else {
             final String json = MifielUtils.convertObjectToJson(document);
 
             StringEntity httpContent;
-            try {
-                httpContent = new StringEntity(json);
-            } catch (UnsupportedEncodingException e) {
-                throw new MifielException("Error creating Http Body for PUT verb", e);
-            }
+            httpContent = new StringEntity(json, "UTF-8");
 
-            final HttpEntity entityResponse = apiClient.put(DOCUMENTS_PATH, httpContent);
-            final String response = MifielUtils.entityToString(entityResponse);
-            return (Document) MifielUtils.convertJsonToObject(response, DOCUMENT_CANONICAL_NAME);
+            entityResponse = apiClient.put(DOCUMENTS_PATH + "/" + document.getId(), httpContent);
         }
+
+        final String response = MifielUtils.entityToString(entityResponse);
+        Document saveDocument = (Document) MifielUtils.convertJsonToObject(response, DOCUMENT_CANONICAL_NAME);
+        saveDocument.setSignatures(document.getSignatures());
+        saveDocument.setViewers(document.getViewers());
+
+        return saveDocument;
     }
 
     public SignatureResponse requestSignature(final String id, final String email, final String cc)
@@ -94,51 +87,4 @@ public class Documents extends BaseObjectDAO<Document> {
                 SIGNATURE_RESPONSE_CANONICAL_NAME);
         return signatureResponse;
     }
-
-    private HttpEntity buildHttpBody(final Document document) throws MifielException {
-
-        final MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
-        entityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-        final List<Signature> signatures = document.getSignatures();
-        final String filePath = document.getFile();
-        final String fileName = document.getFileName();
-        final String originalHash = document.getOriginalHash();
-        final String callbackUrl = document.getCallbackUrl();
-
-        if (!document.getAdditionalProperties().isEmpty()) {
-            for (Map.Entry<String, Object> entry : document.getAdditionalProperties().entrySet()) {
-                MifielUtils.appendTextParamToHttpBody(entityBuilder, entry.getKey(), entry.getValue().toString());
-            }
-        }
-
-        if (signatures != null) {
-            for (int i = 0; i < signatures.size(); i++) {
-                MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][name]",
-                        signatures.get(i).getSignature());
-                MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][email]",
-                        signatures.get(i).getEmail());
-                MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][tax_id]",
-                        signatures.get(i).getTaxId());
-            }
-        }
-
-        if (callbackUrl != null) {
-            MifielUtils.appendTextParamToHttpBody(entityBuilder, "callback_url", callbackUrl);
-        }
-
-        if (!StringUtils.isEmpty(filePath)) {
-            final File pdfFile = new File(filePath);
-            entityBuilder.addBinaryBody("file", pdfFile, ContentType.create(MifielUtils.PDF_CONTENT_TYPE),
-                    pdfFile.getName());
-        } else if (!StringUtils.isEmpty(originalHash) && !StringUtils.isEmpty(fileName)) {
-            entityBuilder.addTextBody("original_hash", originalHash);
-            entityBuilder.addTextBody("name", fileName);
-        } else {
-            throw new MifielException("You must provide file or original hash and file name");
-        }
-
-        return entityBuilder.build();
-    }
-
 }

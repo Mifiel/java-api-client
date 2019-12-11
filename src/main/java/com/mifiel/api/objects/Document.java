@@ -1,5 +1,6 @@
 package com.mifiel.api.objects;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 @JsonPropertyOrder({"id", "original_hash", "name", "signed_by_all", "signed", "signed_at", "status", "owner",
-    "callback_url", "file", "file_download", "file_signed", "file_signed_download", "file_zipped", "signatures"})
+    "callback_url", "file", "file_download", "file_signed", "file_signed_download", "file_zipped", "signatures", "signers"})
 public class Document {
 
     @JsonProperty("id")
@@ -44,8 +45,17 @@ public class Document {
     private String fileZipped;
     @JsonProperty("signatures")
     private List<Signature> signatures = null;
+
+    @JsonProperty("viewers")
+    private List<Viewer> viewers;
+
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+    public Document() {
+        this.viewers = new ArrayList<Viewer>();
+        this.signatures = new ArrayList<Signature>();
+    }
 
     @JsonProperty("id")
     public String getId() {
@@ -205,6 +215,14 @@ public class Document {
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    public List<Viewer> getViewers() {
+        return viewers;
+    }
+
+    public void setViewers(List<Viewer> viewers) {
+        this.viewers = viewers;
     }
 
     @Override

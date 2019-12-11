@@ -66,5 +66,4 @@ public class Owner {
         return "Owner [id=" + id + ", email=" + email + ", name=" + name + ", additionalProperties="
                 + additionalProperties + "]";
     }
-
 }

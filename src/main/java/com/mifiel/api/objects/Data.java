@@ -39,5 +39,4 @@ public class Data {
     public String toString() {
         return "Data [document=" + document + ", additionalProperties=" + additionalProperties + "]";
     }
-
 }

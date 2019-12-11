@@ -2,6 +2,7 @@ package com.mifiel.api;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -10,23 +11,35 @@ import org.junit.Test;
 import com.mifiel.api.dao.Documents;
 import com.mifiel.api.exception.MifielException;
 import com.mifiel.api.objects.Document;
+import com.mifiel.api.objects.Signature;
 import com.mifiel.api.objects.SignatureResponse;
 import com.mifiel.api.utils.MifielUtils;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class DocumentsTest {
 
     private static ApiClient apiClient;
     private static Documents docs;
-    private static String pdfFilePath;
+    private final String pdfFilePath;
+    private final String mifielBase = "https://sandbox.mifiel.com";
+    private static final String appId = "APP_ID"; // TODO: replace with your access token
+    private static final String appSecret = "APP_SECRET"; // TODO: replace with your access token
+    private static final String fileTest = "my_file.pdf";
+    private final String path;
+
+    ClassLoader classLoader = getClass().getClassLoader();
 
     @BeforeClass
     public static void beforeClass() throws MifielException {
-        final String appId = "585763293c61baf5ac9d3819e4610dc25e76cade";
-        final String appSecret = "SyD1xoS4JkaPoDPbfTnUG2QQ20SIV+WWxdQIZPSiH1WrK2E6LrWhWIjGeHeuSfxtteNsgQZo+Xq+fdriJexG7g==";
-
-        pdfFilePath = "/home/enrique/Desktop/20170201-50147577.pdf";
         apiClient = new ApiClient(appId, appSecret);
         docs = new Documents(apiClient);
+    }
+
+    public DocumentsTest() {
+        this.pdfFilePath = classLoader.getResource(fileTest).getFile();
+        this.path = classLoader.getResource(fileTest).getPath().replace(fileTest, "");
     }
 
     @Test(expected = MifielException.class)
@@ -52,6 +65,14 @@ public class DocumentsTest {
         Document doc = new Document();
         doc.setFile(pdfFilePath);
 
+        List<Signature> signatures = new ArrayList<Signature>();
+
+        Signature signature = new Signature();
+        signature.setEmail("ja.zavala.aguilar@gmail.com");
+        signature.setTaxId("ZAAJ8301061E0");
+        signature.setSignature("Juan Antonio Zavala Aguilar");
+        signatures.add(signature);
+        doc.setSignatures(signatures);
         doc = docs.save(doc);
         assertTrue(doc != null);
     }
@@ -115,17 +136,19 @@ public class DocumentsTest {
     }
 
     @Test
-    public void testSaveFileShouldSaveFileOnSpecifiedPath() throws MifielException {
+    public void testSaveFileShouldSaveFileOnSpecifiedPath() throws MifielException, IOException {
         setSandboxUrl();
         Document doc = new Document();
         doc.setFile(pdfFilePath);
-
         doc = docs.save(doc);
 
-        docs.saveFile(doc.getId(), "/home/enrique/Desktop/test123.pdf");
+        String outputPath = this.path + doc.getId();
+        docs.saveFile(doc.getId(), outputPath);
+
+        assertTrue(Files.deleteIfExists(Paths.get(outputPath)));
     }
 
     private void setSandboxUrl() throws MifielException {
-        apiClient.setUrl("https://sandbox.mifiel.com");
+        apiClient.setUrl(mifielBase);
     }
 }
