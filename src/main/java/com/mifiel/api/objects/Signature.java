@@ -9,7 +9,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "email", "signed", "signed_at", "certificate_id", "tax_id", "signature", "user" })
+@JsonPropertyOrder({"email", "signed", "signed_at", "certificate_id", "tax_id", "signature", "user"})
 public class Signature {
 
     @JsonProperty("email")
@@ -115,5 +115,4 @@ public class Signature {
                 + certificateId + ", taxId=" + taxId + ", signature=" + signature + ", user=" + user
                 + ", additionalProperties=" + additionalProperties + "]";
     }
-
 }

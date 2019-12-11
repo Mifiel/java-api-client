@@ -4,6 +4,7 @@ import com.mifiel.api.utils.MifielUtils;
 import com.mifiel.api.objects.Error;
 
 public class MifielException extends Exception {
+
     private static final long serialVersionUID = 1L;
     private final String ERROR_CANONICAL_NAME = Error.class.getCanonicalName();
     private Error mifielError;

@@ -9,7 +9,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "id", "file", "type_of", "cer_hex", "owner", "tax_id", "expires_at", "expired" })
+@JsonPropertyOrder({"id", "file", "type_of", "cer_hex", "owner", "tax_id", "expires_at", "expired"})
 public class Certificate {
 
     @JsonProperty("id")

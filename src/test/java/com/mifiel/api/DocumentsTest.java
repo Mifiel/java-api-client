@@ -62,7 +62,6 @@ public class DocumentsTest {
         Document doc = new Document();
         doc.setOriginalHash(MifielUtils.getDocumentHash(pdfFilePath));
         doc.setFileName("20170201-50147577");
-
         doc = docs.save(doc);
         assertTrue(doc != null);
     }

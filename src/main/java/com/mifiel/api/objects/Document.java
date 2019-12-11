@@ -10,8 +10,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "id", "original_hash", "name", "signed_by_all", "signed", "signed_at", "status", "owner",
-        "callback_url", "file", "file_download", "file_signed", "file_signed_download", "file_zipped", "signatures" })
+@JsonPropertyOrder({"id", "original_hash", "name", "signed_by_all", "signed", "signed_at", "status", "owner",
+    "callback_url", "file", "file_download", "file_signed", "file_signed_download", "file_zipped", "signatures"})
 public class Document {
 
     @JsonProperty("id")
@@ -215,5 +215,4 @@ public class Document {
                 + ", fileSigned=" + fileSigned + ", fileSignedDownload=" + fileSignedDownload + ", fileZipped="
                 + fileZipped + ", signatures=" + signatures + ", additionalProperties=" + additionalProperties + "]";
     }
-
 }

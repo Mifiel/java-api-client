@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.validator.UrlValidator;
 import org.apache.http.HttpEntity;
@@ -21,12 +20,12 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-
 import com.mifiel.api.exception.MifielException;
 import com.mifiel.api.rest.HttpMethod;
 import com.mifiel.api.utils.MifielUtils;
 
 public final class ApiClient {
+
     private final static String HMAC_SHA1_ALGORITHM = "HmacSHA1";
     private final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
     private final String API_VERSION = "/api/v1/";
@@ -164,5 +163,4 @@ public final class ApiClient {
     public void setAppSecret(final String appSecret) {
         this.appSecret = appSecret;
     }
-
 }

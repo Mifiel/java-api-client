@@ -6,6 +6,7 @@ import com.mifiel.api.ApiClient;
 import com.mifiel.api.exception.MifielException;
 
 public abstract class BaseObjectDAO<T> {
+
     protected ApiClient apiClient;
 
     public BaseObjectDAO(final ApiClient apiClient) {
