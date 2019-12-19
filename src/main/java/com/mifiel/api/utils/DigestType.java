@@ -6,7 +6,8 @@ package com.mifiel.api.utils;
  */
 public enum DigestType {
     SHA1("HmacSHA1","HMAC-SHA1"),
-    SHA256("HmacSHA256", "HMAC-SHA256");
+    SHA256("HmacSHA256", "HMAC-SHA256"),
+    JWTEC256("JwtEC256", "ES256");
     
     private final String algorithm;
     private final String hmac;

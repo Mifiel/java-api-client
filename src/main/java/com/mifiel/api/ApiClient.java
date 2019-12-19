@@ -23,11 +23,14 @@ import org.apache.http.util.EntityUtils;
 import com.mifiel.api.exception.MifielException;
 import com.mifiel.api.rest.HttpMethod;
 import com.mifiel.api.utils.DigestType;
+import com.mifiel.api.utils.JWTGenerator;
 import com.mifiel.api.utils.MifielUtils;
+import com.nimbusds.jose.JOSEException;
+import java.security.interfaces.ECPrivateKey;
+import java.text.ParseException;
 
 public final class ApiClient {
 
-    private final static String HMAC_SHA1_ALGORITHM = "HmacSHA1";
     private final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
     private final String API_VERSION = "/api/v1/";
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH);
@@ -36,13 +39,20 @@ public final class ApiClient {
 
     private String appId;
     private String appSecret;
+    private ECPrivateKey ecPrivKey;
     private DigestType digestType;
     private String url = "https://www.mifiel.com";
+    private HttpRequestBase request;
 
     public ApiClient(final String appId, final String appSecret) {
-       this(appId, appSecret, DigestType.SHA1);
+        this(appId, appSecret, DigestType.SHA1);
     }
-    
+
+    public ApiClient(String appId, ECPrivateKey ecPrivKey) {
+        this(appId, null, DigestType.JWTEC256);
+        this.ecPrivKey = ecPrivKey;
+    }
+
     public ApiClient(String appId, String appSecret, DigestType digestType) {
         this.appId = appId;
         this.appSecret = appSecret;
@@ -71,7 +81,6 @@ public final class ApiClient {
 
         final String requestUrl = url + API_VERSION + path;
         final ContentType contentType = ContentType.getOrDefault(body);
-        HttpRequestBase request = null;
         HttpResponse response = null;
         HttpEntity entityResponse = null;
 
@@ -139,9 +148,24 @@ public final class ApiClient {
         final String contentType = contentTypeBody.toString();
         final String date = dateFormat.format(new Date());
         final String contentMd5 = "";// MifielUtils.calculateMD5(content);
-        final String signature = getSignature(httpMethod, path, contentMd5, date, request, contentType);
-        final String authorizationHeader = String.format("APIAuth-%s %s:%s", digestType.getHmac(), appId, signature);
-        
+
+        String authorizationHeader = "";
+
+        switch (digestType) {
+            case SHA1: case SHA256: {
+                final String signature = getSignature(httpMethod, path, contentMd5, date, request, contentType);
+                authorizationHeader = digestType == DigestType.SHA1 ? 
+                        String.format("APIAuth %s:%s", appId, signature) : 
+                        String.format("APIAuth-%s %s:%s", digestType.getHmac(), appId, signature);
+                break;
+            }
+            case JWTEC256: {
+                JWTGenerator jwt = new JWTGenerator(appId);
+                authorizationHeader = jwt.generateJWT(ecPrivKey);
+                break;
+            }
+        }
+
         request.addHeader("Authorization", authorizationHeader);
         request.addHeader("Content-MD5", contentMd5);
         request.addHeader("Content-Type", contentType);
@@ -170,4 +194,8 @@ public final class ApiClient {
     public void setAppSecret(final String appSecret) {
         this.appSecret = appSecret;
     }
+
+   public HttpRequestBase getRequest(){
+       return this.request;
+   }
 }
