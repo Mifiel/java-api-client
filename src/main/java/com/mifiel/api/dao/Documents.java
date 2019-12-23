@@ -17,6 +17,7 @@ import com.mifiel.api.objects.Document;
 import com.mifiel.api.objects.Signature;
 import com.mifiel.api.objects.SignatureResponse;
 import com.mifiel.api.utils.MifielUtils;
+import java.util.Map;
 
 public class Documents extends BaseObjectDAO<Document> {
 
@@ -104,7 +105,13 @@ public class Documents extends BaseObjectDAO<Document> {
         final String fileName = document.getFileName();
         final String originalHash = document.getOriginalHash();
         final String callbackUrl = document.getCallbackUrl();
-        
+
+        if (!document.getAdditionalProperties().isEmpty()) {
+            for (Map.Entry<String, Object> entry : document.getAdditionalProperties().entrySet()) {
+                MifielUtils.appendTextParamToHttpBody(entityBuilder, entry.getKey(), entry.getValue().toString());
+            }
+        }
+
         if (signatures != null) {
             for (int i = 0; i < signatures.size(); i++) {
                 MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][name]",
@@ -115,11 +122,11 @@ public class Documents extends BaseObjectDAO<Document> {
                         signatures.get(i).getTaxId());
             }
         }
-        
+
         if (callbackUrl != null) {
             MifielUtils.appendTextParamToHttpBody(entityBuilder, "callback_url", callbackUrl);
         }
-        
+
         if (!StringUtils.isEmpty(filePath)) {
             final File pdfFile = new File(filePath);
             entityBuilder.addBinaryBody("file", pdfFile, ContentType.create(MifielUtils.PDF_CONTENT_TYPE),
