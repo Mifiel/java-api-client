@@ -9,6 +9,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Data {
+
     @JsonProperty("document")
     private Document document;
     @JsonIgnore
@@ -38,5 +39,4 @@ public class Data {
     public String toString() {
         return "Data [document=" + document + ", additionalProperties=" + additionalProperties + "]";
     }
-
 }

@@ -64,5 +64,4 @@ public class Certificates extends BaseObjectDAO<Certificate> {
 
         return entityBuilder.build();
     }
-
 }

@@ -10,7 +10,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "status", "errors" })
+@JsonPropertyOrder({"status", "errors"})
 public class Error {
 
     @JsonProperty("status")
@@ -67,5 +67,4 @@ public class Error {
         return "Error [status=" + status + ", error=" + error + ", errors=" + errors + ", additionalProperties="
                 + additionalProperties + "]";
     }
-
 }

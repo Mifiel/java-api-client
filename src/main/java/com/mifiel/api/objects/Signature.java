@@ -9,7 +9,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "email", "signed", "signed_at", "certificate_id", "tax_id", "signature", "user" })
+@JsonPropertyOrder({"email", "signed", "signed_at", "certificate_id", "tax_id", "signature", "user"})
 public class Signature {
 
     @JsonProperty("email")
@@ -26,6 +26,9 @@ public class Signature {
     private String signature;
     @JsonProperty("user")
     private User user;
+    @JsonProperty("certificate_number")
+    private String certificate_number;
+
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -109,11 +112,18 @@ public class Signature {
         this.additionalProperties.put(name, value);
     }
 
+    public String getCertificate_number() {
+        return certificate_number;
+    }
+
+    public void setCertificate_number(String certificate_number) {
+        this.certificate_number = certificate_number;
+    }
+
     @Override
     public String toString() {
         return "Signature [email=" + email + ", signed=" + signed + ", signedAt=" + signedAt + ", certificateId="
                 + certificateId + ", taxId=" + taxId + ", signature=" + signature + ", user=" + user
                 + ", additionalProperties=" + additionalProperties + "]";
     }
-
 }

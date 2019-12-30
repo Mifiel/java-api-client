@@ -9,7 +9,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "status", "message", "data" })
+@JsonPropertyOrder({"status", "message", "data"})
 public class SignatureResponse {
 
     @JsonProperty("status")

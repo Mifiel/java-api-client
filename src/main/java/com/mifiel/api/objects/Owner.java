@@ -9,7 +9,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "id", "email", "name" })
+@JsonPropertyOrder({"id", "email", "name"})
 public class Owner {
 
     @JsonProperty("id")
@@ -66,5 +66,4 @@ public class Owner {
         return "Owner [id=" + id + ", email=" + email + ", name=" + name + ", additionalProperties="
                 + additionalProperties + "]";
     }
-
 }
