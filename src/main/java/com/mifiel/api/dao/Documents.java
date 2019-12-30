@@ -10,7 +10,6 @@ import com.mifiel.api.exception.MifielException;
 import com.mifiel.api.objects.Document;
 import com.mifiel.api.objects.SignatureResponse;
 import com.mifiel.api.utils.MifielUtils;
-import java.util.Map;
 
 public class Documents extends BaseObjectDAO<Document> {
 
