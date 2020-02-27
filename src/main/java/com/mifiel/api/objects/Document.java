@@ -45,7 +45,8 @@ public class Document {
     private String fileZipped;
     @JsonProperty("signatures")
     private List<Signature> signatures = null;
-
+    @JsonProperty("signers")
+    private List<Signer> signers;
     @JsonProperty("viewers")
     private List<Viewer> viewers;
 
@@ -53,6 +54,7 @@ public class Document {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     public Document() {
+        this.signers = new ArrayList<Signer>();
         this.viewers = new ArrayList<Viewer>();
         this.signatures = new ArrayList<Signature>();
     }
@@ -207,6 +209,26 @@ public class Document {
         this.signatures = signatures;
     }
 
+    @JsonProperty("signers")
+    public List<Signer> getSigners() {
+        return signers;
+    }
+
+    @JsonProperty("signers")
+    public void setSigners(List<Signer> signers) {
+        this.signers = signers;
+    }
+
+    @JsonProperty("viewers")
+    public List<Viewer> getViewers() {
+        return viewers;
+    }
+
+    @JsonProperty("viewers")
+    public void setViewers(List<Viewer> viewers) {
+        this.viewers = viewers;
+    }
+
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -217,20 +239,12 @@ public class Document {
         this.additionalProperties.put(name, value);
     }
 
-    public List<Viewer> getViewers() {
-        return viewers;
-    }
-
-    public void setViewers(List<Viewer> viewers) {
-        this.viewers = viewers;
-    }
-
     @Override
     public String toString() {
         return "Document [id=" + id + ", originalHash=" + originalHash + ", fileName=" + fileName + ", signedByAll="
                 + signedByAll + ", signed=" + signed + ", signedAt=" + signedAt + ", status=" + status + ", owner="
                 + owner + ", callbackUrl=" + callbackUrl + ", file=" + file + ", fileDownload=" + fileDownload
                 + ", fileSigned=" + fileSigned + ", fileSignedDownload=" + fileSignedDownload + ", fileZipped="
-                + fileZipped + ", signatures=" + signatures + ", additionalProperties=" + additionalProperties + "]";
+                + fileZipped + ", signatures=" + signatures + ", signers=" + signers + ", additionalProperties=" + additionalProperties + "]";
     }
 }
