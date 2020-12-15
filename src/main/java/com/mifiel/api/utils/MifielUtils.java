@@ -174,6 +174,9 @@ public class MifielUtils {
                     signatures.get(i).getTaxId());
             MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][certificate_number]",
                     signatures.get(i).getCertificate_number());
+            for (Map.Entry<String, Object> entry : signatures.get(i).getAdditionalProperties().entrySet()) {
+                MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "]["+ entry.getKey() + "]", entry.getValue().toString());
+            }
         }
 
         for (int i = 0; i < viewers.size(); i++) {
