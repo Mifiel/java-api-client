@@ -11,8 +11,11 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-@JsonPropertyOrder({"id", "original_hash", "name", "signed_by_all", "signed", "signed_at", "status", "owner",
-    "callback_url", "file", "file_download", "file_signed", "file_signed_download", "file_zipped", "signatures", "signers"})
+@JsonPropertyOrder({
+	"id", "original_hash", "name", "signed_by_all", "signed", "signed_at", "status", "owner",
+    "callback_url", "sign_callback_url", "file", "file_download", "file_signed",
+    "file_signed_download", "file_zipped", "signatures", "signers", "send_invites", "send_mail", "allow_business"
+})
 public class Document {
 
     @JsonProperty("id")
@@ -45,6 +48,14 @@ public class Document {
     private String fileZipped;
     @JsonProperty("signatures")
     private List<Signature> signatures = null;
+    @JsonProperty("send_invites")
+    private Boolean sendInvites;
+    @JsonProperty("send_mail")
+    private Boolean sendMail;
+    @JsonProperty("manual_close")
+    private Boolean manualClose;
+    @JsonProperty("allow_business")
+    private Boolean allowBusiness;
     @JsonProperty("signers")
     private List<Signer> signers;
     @JsonProperty("viewers")
@@ -96,6 +107,16 @@ public class Document {
 
     @JsonProperty("signed_by_all")
     public void setSignedByAll(Boolean signedByAll) {
+        this.signedByAll = signedByAll;
+    }
+
+    @JsonProperty("send_invites")
+    public Boolean getSendInvites() {
+        return this.sendInvites;
+    }
+
+    @JsonProperty("send_invites")
+    public void setSendInvites(Boolean signedByAll) {
         this.signedByAll = signedByAll;
     }
 
