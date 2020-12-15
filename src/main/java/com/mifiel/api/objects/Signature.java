@@ -9,11 +9,13 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-@JsonPropertyOrder({"email", "signed", "signed_at", "certificate_id", "tax_id", "signature", "user"})
+@JsonPropertyOrder({"email", "name", "signed", "signed_at", "certificate_id", "tax_id", "signature", "user"})
 public class Signature {
 
     @JsonProperty("email")
     private String email;
+    @JsonProperty("name")
+    private String name;
     @JsonProperty("signed")
     private Boolean signed;
     @JsonProperty("signed_at")
@@ -40,6 +42,16 @@ public class Signature {
     @JsonProperty("email")
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @JsonProperty("name")
+    public String getName() {
+        return name;
+    }
+
+    @JsonProperty("name")
+    public void setName(String name) {
+        this.name = name;
     }
 
     @JsonProperty("signed")
