@@ -138,7 +138,7 @@ public class MifielUtils {
         final String originalHash = document.getOriginalHash();
         final String callbackUrl = document.getCallbackUrl();
 
-		if (!document.getAdditionalProperties().isEmpty()) {
+        if (!document.getAdditionalProperties().isEmpty()) {
             for (Map.Entry<String, Object> entry : document.getAdditionalProperties().entrySet()) {
                 MifielUtils.appendTextParamToHttpBody(entityBuilder, entry.getKey(), entry.getValue().toString());
             }
@@ -175,7 +175,7 @@ public class MifielUtils {
             MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][certificate_number]",
                     signatures.get(i).getCertificate_number());
             for (Map.Entry<String, Object> entry : signatures.get(i).getAdditionalProperties().entrySet()) {
-                MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "]["+ entry.getKey() + "]", entry.getValue().toString());
+                MifielUtils.appendTextParamToHttpBody(entityBuilder, "signatories[" + i + "][" + entry.getKey() + "]", entry.getValue().toString());
             }
         }
 

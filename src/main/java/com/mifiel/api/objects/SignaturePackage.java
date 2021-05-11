@@ -12,51 +12,60 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "status", "certificates", "plaintexts" })
+@JsonPropertyOrder({"status", "certificates", "plaintexts"})
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SignaturePackage {
-	@JsonProperty("status")
-	private String status;
 
-	@JsonIgnore
-	private SignaturePackageSettings settings;
+    @JsonProperty("status")
+    private String status;
 
-	@JsonProperty("certificates")
-	private List<Certificate> certificates = new ArrayList<Certificate>();
+    @JsonIgnore
+    private SignaturePackageSettings settings;
 
-	@JsonProperty("plaintexts")
-	private List<PlainText> plaintexts = new ArrayList<PlainText>();
+    @JsonProperty("certificates")
+    private List<Certificate> certificates = new ArrayList<Certificate>();
 
-	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    @JsonProperty("plaintexts")
+    private List<PlainText> plaintexts = new ArrayList<PlainText>();
 
-	public String getStatus() {
-		return this.status;
-	}
+    @JsonIgnore
+    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-	public List<Certificate> getCertificates() {
-		return this.certificates;
-	}
+    public String getStatus() {
+        return this.status;
+    }
 
-	public List<PlainText> getPlaintexts() {
-		return this.plaintexts;
-	}
+    public List<Certificate> getCertificates() {
+        return this.certificates;
+    }
 
-	public void setCertificates(List<Certificate> certificates) {
-		this.certificates = certificates;
-	}
+    public List<PlainText> getPlaintexts() {
+        return this.plaintexts;
+    }
 
-	public void setPlaintexts(List<PlainText> plaintexts) {
-		this.plaintexts = plaintexts;
-	}
+    public void setCertificates(List<Certificate> certificates) {
+        this.certificates = certificates;
+    }
 
-	@JsonAnyGetter
-	public Map<String, Object> getAdditionalProperties() {
-		return this.additionalProperties;
-	}
+    public void setPlaintexts(List<PlainText> plaintexts) {
+        this.plaintexts = plaintexts;
+    }
 
-	@JsonAnySetter
-	public void setAdditionalProperty(String name, Object value) {
-		this.additionalProperties.put(name, value);
-	}
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setSettings(SignaturePackageSettings settings) {
+        this.settings = settings;
+    }
+
+    @JsonAnySetter
+    public void setAdditionalProperty(String name, Object value) {
+        this.additionalProperties.put(name, value);
+    }
 }

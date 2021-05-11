@@ -12,7 +12,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 @JsonPropertyOrder({
-	"id", "original_hash", "name", "signed_by_all", "signed", "signed_at", "status", "owner",
+    "id", "original_hash", "name", "signed_by_all", "signed", "signed_at", "status", "owner",
     "callback_url", "sign_callback_url", "file", "file_download", "file_signed",
     "file_signed_download", "file_zipped", "signatures", "signers", "send_invites", "send_mail", "allow_business"
 })

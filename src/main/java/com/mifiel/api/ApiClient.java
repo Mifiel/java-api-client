@@ -60,7 +60,7 @@ public final class ApiClient {
         return sendRequest(HttpMethod.PUT, path, content);
     }
 
-	public HttpEntity patch(final String path, final HttpEntity content) throws MifielException {
+    public HttpEntity patch(final String path, final HttpEntity content) throws MifielException {
         return sendRequest(HttpMethod.PATCH, path, content);
     }
 
