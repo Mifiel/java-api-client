@@ -12,16 +12,16 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * @author jazavala
  */
 public class Viewer {
-    
+
     @JsonProperty("email")
     private String email;
-    
+
     @JsonProperty("tax_id")
     private String taxId;
-    
+
     @JsonProperty("name")
     private String name;
-    
+
     @JsonProperty("certificate_number")
     private String certificate_number;
 

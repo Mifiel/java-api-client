@@ -12,6 +12,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -59,6 +60,10 @@ public final class ApiClient {
         return sendRequest(HttpMethod.PUT, path, content);
     }
 
+    public HttpEntity patch(final String path, final HttpEntity content) throws MifielException {
+        return sendRequest(HttpMethod.PATCH, path, content);
+    }
+
     private HttpEntity sendRequest(final HttpMethod httpMethod, final String path, final HttpEntity body)
             throws MifielException {
 
@@ -82,6 +87,10 @@ public final class ApiClient {
             case PUT:
                 request = new HttpPut(requestUrl);
                 ((HttpPut) request).setEntity(body);
+                break;
+            case PATCH:
+                request = new HttpPatch(requestUrl);
+                ((HttpPatch) request).setEntity(body);
                 break;
             default:
                 throw new MifielException("Unsupported HttpMethod: " + httpMethod);
