@@ -3,7 +3,7 @@
   [
     {
       "file_exclude_patterns": ["*.sublime-workspace"],
-      "folder_exclude_patterns": ["target"],
+      "folder_exclude_patterns": ["target", ".mvn"],
       "follow_symlinks": true,
       "path": ".",
       "tab_size": 2,
