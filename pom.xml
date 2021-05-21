@@ -3,15 +3,60 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mifiel</groupId>
     <artifactId>mifiel-api-client</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <name>mifiel-api-client</name>
-    <url>http://maven.apache.org</url>
+    <description>Mifiel API Client for Java</description>
+    <url>https://www.mifiel.com</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <licenses>
+        <license>
+            <name>The MIT License</name>
+            <url>https://raw.githubusercontent.com/Mifiel/java-api-client/master/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/Mifiel/java-api-client.git</connection>
+        <developerConnection>scm:git:git://github.com/Mifiel/java-api-client.git</developerConnection>
+        <url>https://github.com/Mifiel/java-api-client</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>genaromadrid</id>
+            <name>Genaro Madrid</name>
+            <email>genaro@mifiel.com</email>
+            <organization>Mifiel</organization>
+            <organizationUrl>https://www.mifiel.com/</organizationUrl>
+            <roles>
+                <role>CTO</role>
+            </roles>
+            <properties>
+                <picUrl>https://avatars.githubusercontent.com/u/9002856</picUrl>
+            </properties>
+        </developer>
+        <developer>
+            <id>jazavala</id>
+            <name>Juan Antonio Zavala Aguilar</name>
+            <email>juan@mifiel.com</email>
+            <organization>Mifiel</organization>
+            <organizationUrl>https://www.mifiel.com/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <properties>
+                <picUrl>https://avatars.githubusercontent.com/u/2108873</picUrl>
+            </properties>
+        </developer>
+    </developers>
 
     <dependencies>
         <dependency>
@@ -110,6 +155,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9.1</version>
+                <configuration>
+        			<source>8</source>
+    			</configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -133,7 +181,7 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
