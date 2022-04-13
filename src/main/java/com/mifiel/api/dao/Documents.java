@@ -45,6 +45,16 @@ public class Documents extends BaseObjectDAO<Document> {
         MifielUtils.saveEntityResponseToFile(entityResponse, localPath);
     }
 
+    public void saveSignedFile(final String id, final String localPath) throws MifielException {
+        final HttpEntity entityResponse = apiClient.get(DOCUMENTS_PATH + "/" + id+ "/file_signed");
+        MifielUtils.saveEntityResponseToFile(entityResponse, localPath);
+    }
+
+    public void saveZip(final String id, final String localPath) throws MifielException {
+        final HttpEntity entityResponse = apiClient.get(DOCUMENTS_PATH + "/" + id + "/zip");
+        MifielUtils.saveEntityResponseToFile(entityResponse, localPath);
+    }
+
     public void saveXml(final String id, final String localPath) throws MifielException {
         final HttpEntity entityResponse = apiClient.get(DOCUMENTS_PATH + "/" + id + "/xml");
         MifielUtils.saveEntityResponseToFile(entityResponse, localPath);
