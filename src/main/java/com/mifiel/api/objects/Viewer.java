@@ -13,6 +13,9 @@ import org.codehaus.jackson.annotate.JsonProperty;
  */
 public class Viewer {
 
+    @JsonProperty("id")
+    private String id;
+
     @JsonProperty("email")
     private String email;
 
@@ -24,6 +27,14 @@ public class Viewer {
 
     @JsonProperty("certificate_number")
     private String certificate_number;
+
+    public String getId() {
+        return id;
+    }
+    
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getEmail() {
         return email;
