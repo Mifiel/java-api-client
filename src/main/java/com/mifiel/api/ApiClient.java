@@ -45,7 +45,11 @@ public final class ApiClient {
     }
 
     public HttpEntity get(final String path) throws MifielException {
-        return sendRequest(HttpMethod.GET, path, MultipartEntityBuilder.create().build());
+        try {
+            return sendRequest(HttpMethod.GET, path, new StringEntity("application/json"));
+        } catch (UnsupportedEncodingException e) {
+            throw new MifielException("Error creating empty entity for GET request", e);
+        }
     }
 
     public HttpEntity post(final String path, final HttpEntity content) throws MifielException {
@@ -53,7 +57,11 @@ public final class ApiClient {
     }
 
     public HttpEntity delete(final String path) throws MifielException {
-        return sendRequest(HttpMethod.DELETE, path, MultipartEntityBuilder.create().build());
+        try {
+            return sendRequest(HttpMethod.DELETE, path, new StringEntity("application/json"));
+        } catch (UnsupportedEncodingException e) {
+            throw new MifielException("Error creating empty entity for DELETE request", e);
+        }
     }
 
     public HttpEntity put(final String path, final HttpEntity content) throws MifielException {
