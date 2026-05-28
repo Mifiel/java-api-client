@@ -28,6 +28,12 @@ public class Viewer {
     @JsonProperty("certificate_number")
     private String certificate_number;
 
+    @JsonProperty("created_at")
+    private String createdAt;
+    
+    @JsonProperty("updated_at")
+    private String updatedAt;
+    
     public String getId() {
         return id;
     }
@@ -67,4 +73,22 @@ public class Viewer {
     public void setCertificate_number(String certificate_number) {
         this.certificate_number = certificate_number;
     }
+
+	public String getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public String getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(String updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+    
+    
 }
