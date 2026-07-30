@@ -29,6 +29,7 @@ import com.mifiel.api.objects.Document;
 import com.mifiel.api.objects.Signature;
 import com.mifiel.api.objects.Viewer;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -103,7 +104,7 @@ public class MifielUtils {
     public static void appendTextParamToHttpBody(final MultipartEntityBuilder entityBuilder, final String paramName,
             final String paramValue) {
         if (!StringUtils.isEmpty(paramValue)) {
-            entityBuilder.addTextBody(paramName, paramValue);
+            entityBuilder.addTextBody(paramName, paramValue, ContentType.create("text/plain", StandardCharsets.UTF_8));
         }
     }
 
@@ -132,7 +133,9 @@ public class MifielUtils {
     public static HttpEntity buildHttpBody(final Document document) throws MifielException {
 
         final MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
-        entityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        entityBuilder.setCharset(StandardCharsets.UTF_8);
+        entityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);        
+        
         final String filePath = document.getFile();
         final String fileName = document.getFileName();
         final String originalHash = document.getOriginalHash();
