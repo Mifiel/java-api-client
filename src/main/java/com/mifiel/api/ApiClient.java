@@ -36,7 +36,7 @@ public final class ApiClient {
 
     private String appId;
     private String appSecret;
-    private String url = "https://www.mifiel.com";
+    private String url = "https://app.mifiel.com";
 
     public ApiClient(final String appId, final String appSecret) {
         this.appId = appId;
