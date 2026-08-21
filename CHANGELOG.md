@@ -7,6 +7,10 @@
 - Default API host changed from `https://www.mifiel.com` to `https://app.mifiel.com`.
 - Sandbox documentation and examples now use `https://app-sandbox.mifiel.com` instead of `https://sandbox.mifiel.com`.
 
+### Features
+
+- Send a standardized `User-Agent` on API requests, e.g. `JAVA/17.0.9 mifiel-api-client/2.0.0 httpclient/4.5.2 (Linux/6.8.0)`.
+
 ### Migration
 
 ```java

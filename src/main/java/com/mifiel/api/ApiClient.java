@@ -156,6 +156,31 @@ public final class ApiClient {
         request.addHeader("Content-MD5", contentMd5);
         request.addHeader("Content-Type", contentType);
         request.addHeader("Date", date);
+        request.addHeader("User-Agent", userAgent());
+    }
+
+    /**
+     * Example: JAVA/17.0.9 mifiel-api-client/2.0.0 httpclient/4.5.2 (Linux/6.8.0)
+     */
+    String userAgent() {
+        final String javaVersion = System.getProperty("java.version", "unknown");
+        final String httpClientVersion = httpClientVersion();
+        final String osName = System.getProperty("os.name", "unknown").replace(' ', '_');
+        final String osVersion = System.getProperty("os.version", "-").replace(' ', '_');
+
+        return String.format("JAVA/%s %s/%s httpclient/%s (%s/%s)", javaVersion, Version.PACKAGE,
+                Version.STRING, httpClientVersion, osName, osVersion);
+    }
+
+    private String httpClientVersion() {
+        final Package httpClientPackage = org.apache.http.client.HttpClient.class.getPackage();
+        if (httpClientPackage != null) {
+            final String version = httpClientPackage.getImplementationVersion();
+            if (version != null && !version.isEmpty()) {
+                return version;
+            }
+        }
+        return "4.5.2";
     }
 
     private String getSignature(final HttpMethod httpMethod, final String path, final String contentMd5,
