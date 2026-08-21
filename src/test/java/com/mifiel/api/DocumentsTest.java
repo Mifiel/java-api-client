@@ -23,7 +23,7 @@ public class DocumentsTest {
     private static ApiClient apiClient;
     private static Documents docs;
     private final String pdfFilePath;
-    private final String mifielBase = "https://sandbox.mifiel.com";
+    private final String mifielBase = "https://app-sandbox.mifiel.com";
     private static final String appId = "APP_ID"; // TODO: replace with your access token
     private static final String appSecret = "APP_SECRET"; // TODO: replace with your access token
     private static final String fileTest = "my_file.pdf";
@@ -49,7 +49,7 @@ public class DocumentsTest {
 
     @Test
     public void testCorrectUrlShouldNotThorwAnException() throws MifielException {
-        apiClient.setUrl("https://sandbox.mifiel.com");
+        apiClient.setUrl("https://app-sandbox.mifiel.com");
     }
 
     @Test
