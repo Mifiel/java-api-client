@@ -1,11 +1,17 @@
 package com.mifiel.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.BeforeClass;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.StringEntity;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.mifiel.api.dao.Documents;
@@ -14,141 +20,148 @@ import com.mifiel.api.objects.Document;
 import com.mifiel.api.objects.Signature;
 import com.mifiel.api.objects.SignatureResponse;
 import com.mifiel.api.utils.MifielUtils;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class DocumentsTest {
 
-    private static ApiClient apiClient;
-    private static Documents docs;
-    private final String pdfFilePath;
-    private final String mifielBase = "https://app-sandbox.mifiel.com";
-    private static final String appId = "APP_ID"; // TODO: replace with your access token
-    private static final String appSecret = "APP_SECRET"; // TODO: replace with your access token
-    private static final String fileTest = "my_file.pdf";
-    private final String path;
+    private static final String DOCUMENT_ID = "doc-123";
+    private static final String FILE_TEST = "my_file.pdf";
 
-    ClassLoader classLoader = getClass().getClassLoader();
+    private FakeApiClient apiClient;
+    private Documents docs;
+    private String pdfFilePath;
 
-    @BeforeClass
-    public static void beforeClass() throws MifielException {
-        apiClient = new ApiClient(appId, appSecret);
+    @Before
+    public void setUp() {
+        apiClient = new FakeApiClient();
         docs = new Documents(apiClient);
-    }
-
-    public DocumentsTest() {
-        this.pdfFilePath = classLoader.getResource(fileTest).getFile();
-        this.path = classLoader.getResource(fileTest).getPath().replace(fileTest, "");
+        pdfFilePath = getClass().getClassLoader().getResource(FILE_TEST).getFile();
     }
 
     @Test(expected = MifielException.class)
     public void testWrongUrlShouldThorwAnException() throws MifielException {
-        apiClient.setUrl("www.google.com");
+        new ApiClient("app-id", "app-secret").setUrl("www.google.com");
     }
 
     @Test
     public void testCorrectUrlShouldNotThorwAnException() throws MifielException {
-        apiClient.setUrl("https://app-sandbox.mifiel.com");
+        new ApiClient("app-id", "app-secret").setUrl("https://app-sandbox.mifiel.com");
     }
 
     @Test
-    public void testGetAllDocumentsShouldReturnAList() throws MifielException {
-        setSandboxUrl();
+    public void testGetAllDocumentsShouldReturnAList() throws Exception {
+        apiClient.setNextResponse(jsonEntity("[{\"id\":\"" + DOCUMENT_ID + "\",\"name\":\"doc.pdf\"}]"));
+
         final List<Document> allDocuments = docs.findAll();
-        assertTrue(allDocuments != null);
+
+        assertNotNull(allDocuments);
+        assertEquals(1, allDocuments.size());
+        assertEquals(DOCUMENT_ID, allDocuments.get(0).getId());
+        assertEquals("GET", apiClient.getLastMethod());
+        assertEquals(Documents.DOCUMENTS_PATH, apiClient.getLastPath());
     }
 
     @Test
-    public void testSaveADocumentWithFilePath() throws MifielException {
-        setSandboxUrl();
+    public void testSaveADocumentWithFilePath() throws Exception {
+        apiClient.setNextResponse(jsonEntity("{\"id\":\"" + DOCUMENT_ID + "\",\"name\":\"my_file.pdf\"}"));
+
         Document doc = new Document();
         doc.setFile(pdfFilePath);
 
         List<Signature> signatures = new ArrayList<Signature>();
-
         Signature signature = new Signature();
-        signature.setEmail("ja.zavala.aguilar@gmail.com");
+        signature.setEmail("signer@example.com");
         signature.setTaxId("ZAAJ8301061E0");
-        signature.setSignature("Juan Antonio Zavala Aguilar");
+        signature.setSignature("Test Signer");
         signatures.add(signature);
         doc.setSignatures(signatures);
+
         doc = docs.save(doc);
-        assertTrue(doc != null);
+
+        assertNotNull(doc);
+        assertEquals(DOCUMENT_ID, doc.getId());
+        assertEquals(1, doc.getSignatures().size());
+        assertEquals("signer@example.com", doc.getSignatures().get(0).getEmail());
+        assertEquals("POST", apiClient.getLastMethod());
+        assertEquals(Documents.DOCUMENTS_PATH, apiClient.getLastPath());
+        assertNotNull(apiClient.getLastBody());
     }
 
     @Test
-    public void testSaveADocumentWithOriginalHashAndFileName() throws MifielException {
-        setSandboxUrl();
+    public void testSaveADocumentWithOriginalHashAndFileName() throws Exception {
+        apiClient.setNextResponse(jsonEntity("{\"id\":\"" + DOCUMENT_ID + "\",\"name\":\"20170201-50147577\"}"));
+
         Document doc = new Document();
         doc.setOriginalHash(MifielUtils.getDocumentHash(pdfFilePath));
         doc.setFileName("20170201-50147577");
         doc = docs.save(doc);
-        assertTrue(doc != null);
+
+        assertNotNull(doc);
+        assertEquals(DOCUMENT_ID, doc.getId());
+        assertEquals("POST", apiClient.getLastMethod());
+        assertEquals(Documents.DOCUMENTS_PATH, apiClient.getLastPath());
     }
 
     @Test(expected = MifielException.class)
-    public void testSaveADocumentWithoutRequiredFieldsShouldThrowAnException() throws MifielException {
-        setSandboxUrl();
+    public void testSaveADocumentWithoutRequiredFieldsShouldThrowAnException() throws Exception {
         Document doc = new Document();
         doc.setCallbackUrl("http://www.google.com");
 
-        docs.save(doc);
-    }
-
-    @Test
-    public void testGetDocumentShouldReturnADocument() throws MifielException {
-        setSandboxUrl();
-        testSaveADocumentWithOriginalHashAndFileName();
-        final List<Document> allDocuments = docs.findAll();
-        if (allDocuments.size() > 0) {
-            Document doc1 = docs.find(allDocuments.get(0).getId());
-            assertTrue(doc1 != null);
-        } else {
-            throw new MifielException("No documents found");
+        try {
+            docs.save(doc);
+        } finally {
+            assertEquals(0, apiClient.getPostCount());
         }
     }
 
     @Test
-    public void testDeleteShouldRemoveADocument() throws MifielException {
-        setSandboxUrl();
+    public void testGetDocumentShouldReturnADocument() throws Exception {
+        apiClient.setNextResponse(jsonEntity("{\"id\":\"" + DOCUMENT_ID + "\",\"name\":\"doc.pdf\"}"));
 
-        Document doc = new Document();
-        doc.setOriginalHash(MifielUtils.getDocumentHash(pdfFilePath));
-        doc.setFileName("20170201-50147577");
-        doc = docs.save(doc);
+        Document doc = docs.find(DOCUMENT_ID);
 
-        docs.delete(doc.getId());
+        assertNotNull(doc);
+        assertEquals(DOCUMENT_ID, doc.getId());
+        assertEquals("GET", apiClient.getLastMethod());
+        assertEquals(Documents.DOCUMENTS_PATH + "/" + DOCUMENT_ID, apiClient.getLastPath());
     }
 
     @Test
-    public void testRequestSignatureShouldReturnASignatureResponse() throws MifielException {
-        setSandboxUrl();
+    public void testDeleteShouldRemoveADocument() throws Exception {
+        apiClient.setNextResponse(jsonEntity(""));
 
-        Document doc = new Document();
-        doc.setOriginalHash(MifielUtils.getDocumentHash(pdfFilePath));
-        doc.setFileName("20170201-50147577");
-        doc = docs.save(doc);
+        docs.delete(DOCUMENT_ID);
 
-        SignatureResponse sig = docs.requestSignature(doc.getId(), "enrique@test.com", "enrique2@test.com");
-
-        assertTrue(sig != null);
+        assertEquals("DELETE", apiClient.getLastMethod());
+        assertEquals(Documents.DOCUMENTS_PATH + "/" + DOCUMENT_ID, apiClient.getLastPath());
     }
 
     @Test
-    public void testSaveFileShouldSaveFileOnSpecifiedPath() throws MifielException, IOException {
-        setSandboxUrl();
-        Document doc = new Document();
-        doc.setFile(pdfFilePath);
-        doc = docs.save(doc);
+    public void testRequestSignatureShouldReturnASignatureResponse() throws Exception {
+        apiClient.setNextResponse(jsonEntity("{\"status\":\"success\",\"message\":\"Signature requested\"}"));
 
-        String outputPath = this.path + doc.getId();
-        docs.saveFile(doc.getId(), outputPath);
+        SignatureResponse sig = docs.requestSignature(DOCUMENT_ID, "enrique@test.com", "enrique2@test.com");
 
-        assertTrue(Files.deleteIfExists(Paths.get(outputPath)));
+        assertNotNull(sig);
+        assertEquals("success", sig.getStatus());
+        assertEquals("POST", apiClient.getLastMethod());
+        assertEquals(Documents.DOCUMENTS_PATH + "/" + DOCUMENT_ID + "/request_signature", apiClient.getLastPath());
     }
 
-    private void setSandboxUrl() throws MifielException {
-        apiClient.setUrl(mifielBase);
+    @Test
+    public void testSaveFileShouldSaveFileOnSpecifiedPath() throws Exception {
+        File output = File.createTempFile("mifiel-doc-", ".bin");
+        output.deleteOnExit();
+
+        apiClient.setNextResponse(new StringEntity("pdf-bytes", StandardCharsets.UTF_8));
+
+        docs.saveFile(DOCUMENT_ID, output.getAbsolutePath());
+
+        assertTrue(output.length() > 0);
+        assertEquals("GET", apiClient.getLastMethod());
+        assertEquals(Documents.DOCUMENTS_PATH + "/" + DOCUMENT_ID + "/file", apiClient.getLastPath());
+    }
+
+    private static HttpEntity jsonEntity(String json) throws Exception {
+        return new StringEntity(json, StandardCharsets.UTF_8);
     }
 }
