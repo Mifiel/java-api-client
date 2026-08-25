@@ -25,7 +25,7 @@ import com.mifiel.api.exception.MifielException;
 import com.mifiel.api.rest.HttpMethod;
 import com.mifiel.api.utils.MifielUtils;
 
-public final class ApiClient {
+public class ApiClient {
 
     private final static String HMAC_SHA1_ALGORITHM = "HmacSHA1";
     private final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
