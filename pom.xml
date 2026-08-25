@@ -118,11 +118,6 @@
             <artifactId>oro</artifactId>
             <version>2.0.8</version>
         </dependency>
-        <dependency>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.8</version>
-        </dependency>
     </dependencies>
 
     <distributionManagement>
@@ -199,8 +194,8 @@
                 <version>3.6.1</version>
                 <configuration>
                     <!-- or whatever version you use -->
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
