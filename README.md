@@ -13,7 +13,23 @@ This README covers installation and client setup only.
 
 ## Installation
 
-TODO
+Requires Java 8 or later. The client is published on Maven Central as [com.mifiel:mifiel-api-client](https://central.sonatype.com/artifact/com.mifiel/mifiel-api-client).
+
+### Maven
+
+```xml
+<dependency>
+  <groupId>com.mifiel</groupId>
+  <artifactId>mifiel-api-client</artifactId>
+  <version>2.0.0</version>
+</dependency>
+```
+
+### Gradle
+
+```groovy
+implementation 'com.mifiel:mifiel-api-client:2.0.0'
+```
 
 ## Setup
 
